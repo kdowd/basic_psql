@@ -1,0 +1,1257 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Create your first PostgreSQL database — basic_psql</title>
+    <link rel="stylesheet" href="./rootvars.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./lesson.css" />
+    <link rel="stylesheet" href="./menu.css" />
+  </head>
+
+  <body>
+    <header class="site-header">
+      <p>Built using <strong>DeepSeek Harness - Agentic AI.</strong></p>
+      <div class="hero-menu">
+        <a href="./index.html">Home</a>
+        <a href="./basic_usage.html">Basic Usage</a>
+        <a href="./intermediate_usage.html">Intermediate Usage</a>
+      </div>
+    </header>
+
+    <div class="app">
+      <!-- ============ left-hand tab region ============ -->
+      <div class="tab-region">
+        <!-- vertical tab rail -->
+        <div class="tablist" role="tablist" aria-orientation="vertical" aria-label="Lesson sections">
+          <div class="tablist-label">Lesson</div>
+
+          <button class="tab" id="tab-objectives" role="tab" type="button" aria-selected="true" aria-controls="panel-objectives" tabindex="0">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 11v5" />
+              <circle cx="12" cy="7.6" r=".9" fill="currentColor" stroke="none" />
+            </svg>
+            <span class="label" title="What you will be able to do">Objectives</span>
+          </button>
+
+          <button class="tab" id="tab-setup" role="tab" type="button" aria-selected="false" aria-controls="panel-setup" tabindex="-1">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="16" rx="2" />
+              <path d="M7 9.5l3 2.5-3 2.5" />
+              <path d="M13 15h4" />
+            </svg>
+            <span class="label" title="Get psql running and confirm the environment">Setup</span>
+          </button>
+
+          <button class="tab" id="tab-build" role="tab" type="button" aria-selected="false" aria-controls="panel-build" tabindex="-1">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <ellipse cx="12" cy="6" rx="7" ry="3" />
+              <path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6" />
+              <path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3" />
+            </svg>
+            <span class="label" title="The worked example, with real output">Build it</span>
+          </button>
+
+          <button class="tab" id="tab-practice" role="tab" type="button" aria-selected="false" aria-controls="panel-practice" tabindex="-1">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 20h4l10-10-4-4L4 16z" />
+              <path d="M13.5 6.5l4 4" />
+            </svg>
+            <span class="label" title="Guided exercise and four problems">Practice</span>
+          </button>
+
+          <button class="tab" id="tab-solutions" role="tab" type="button" aria-selected="false" aria-controls="panel-solutions" tabindex="-1">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M8.2 12.4l2.6 2.6 5-5.4" />
+            </svg>
+            <span class="label" title="Runnable answers">Solutions</span>
+          </button>
+
+          <button class="tab" id="tab-traps" role="tab" type="button" aria-selected="false" aria-controls="panel-traps" tabindex="-1">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 4l9 16H3z" />
+              <path d="M12 10v4" />
+              <circle cx="12" cy="17" r=".9" fill="currentColor" stroke="none" />
+            </svg>
+            <span class="label" title="Wrong mental models this topic produces">Traps</span>
+          </button>
+
+          <button class="tab" id="tab-transfer" role="tab" type="button" aria-selected="false" aria-controls="panel-transfer" tabindex="-1">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 12h16" />
+              <path d="M14 6l6 6-6 6" />
+            </svg>
+            <span class="label" title="Same structure, different story">Transfer</span>
+          </button>
+
+          <button class="tab" id="tab-cheatsheet" role="tab" type="button" aria-selected="false" aria-controls="panel-cheatsheet" tabindex="-1">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 5.5h16" />
+              <path d="M4 11h16" />
+              <path d="M4 16.5h10" />
+              <path d="M4 21h6" />
+            </svg>
+            <span class="label" title="Every command this lesson used, plus the ones you will want next">Cheatsheet</span>
+          </button>
+
+          <div class="rail-footer">45–60 minutes</div>
+        </div>
+
+        <!-- content panel -->
+        <div class="panel" id="tab-panel">
+          <div class="panel-inner">
+            <!-- ==================== 1. OBJECTIVES ==================== -->
+            <section id="panel-objectives" role="tabpanel" aria-labelledby="tab-objectives" tabindex="0">
+              <h2>Create a database, a table, and read it back</h2>
+              <div class="meta">Objectives · single topic · 45–60 minutes</div>
+
+              <p class="lesson-lede">
+                You will build a small database from scratch inside a <code>psql</code> session, put a table in it, fill the table with eight rows, and read them back. Nothing is simulated: every command and every line
+                of output on this page came from the PostgreSQL 18.6 server running on this machine, so when your screen matches, you are right.
+              </p>
+
+              <div class="callout tip">
+                <p>
+                  <strong>Never used a database before?</strong> Open <a href="./basic_usage.html">basic_usage.html</a> first. It is the same five commands in six short steps, with no jargon. This page is the one to come
+                  back to afterwards.
+                </p>
+              </div>
+
+              <div class="callout">
+                <p>
+                  <strong>Assumptions.</strong> You have never created a database before. <code>psql</code> is installed and a server is already running on <code>localhost:5432</code>. You can connect as the
+                  <code>postgres</code> role. You have 45–60 minutes. No other dataset is needed.
+                </p>
+              </div>
+
+              <h3>By the end you will be able to</h3>
+              <ol class="objectives">
+                <li><strong>Connect to the running server</strong> with <code>psql</code>, and prove which database and which user you are talking to.</li>
+                <li><strong>Create a database</strong> called <code>basic_psql</code> and a table <code>users</code> whose four columns have types you chose yourself.</li>
+                <li><strong>Insert eight rows in one statement</strong>, including a name that contains an apostrophe.</li>
+                <li>
+                  <strong>Read the rows back with a <code>SELECT</code></strong
+                  >, and state the row count and column list of any query you write before you run it.
+                </li>
+                <li><strong>Predict what a missing value does</strong> to <code>count()</code>, to a comparison, and to a sort — before you run the query.</li>
+              </ol>
+
+              <h3>What you are building</h3>
+
+              <pre class="tree">
+server   localhost:5432   (PostgreSQL 18.6, already running)
+└── database  basic_psql          &lt;- you create this
+    └── table  public.users       &lt;- you create this
+        ├── firstname   text
+        ├── lastname    text
+        ├── age         integer
+        └── email       text
+            └── 8 rows            &lt;- you insert these</pre
+              >
+
+              <h3>How to use this page</h3>
+              <ul>
+                <li>Read <strong>Build it</strong> once without typing, then do it again with <code>psql</code> open beside it.</li>
+                <li>Work through <strong>Practice</strong> before opening <strong>Solutions</strong>. The hints are in the exercise cards, and each one gives away less than the last.</li>
+                <li>
+                  Keep two numbers in your head the whole way through: <strong>8</strong> (the rows you inserted) and <strong>7</strong> (the rows that actually have an age). Every trap in this lesson lives in the gap
+                  between them.
+                </li>
+              </ul>
+            </section>
+
+            <!-- ==================== 2. SETUP ==================== -->
+            <section id="panel-setup" role="tabpanel" aria-labelledby="tab-setup" tabindex="0" hidden>
+              <h2>Setup</h2>
+              <div class="meta">Step 0 · about five minutes</div>
+
+              <p>The server is already running, so setup is only about getting into it and checking where you landed.</p>
+
+              <ol class="steps">
+                <li>
+                  <h4>Start psql as the postgres role</h4>
+                  <pre class="sql">psql -U postgres</pre>
+                  <p><code>-U postgres</code> is the default user. So you are logging in as a database superuser.</p>
+                </li>
+
+                <li>
+                  <h4>Read the prompt</h4>
+                  <p>
+                    Your prompt changes to <code>postgres=#</code>. That single line tells you two things: the word before <code>=</code> is the database you are connected to, and a <code>#</code> at the end means you
+                    are a superuser. An ordinary user gets <code>&gt;</code> instead.
+                  </p>
+                </li>
+
+                <li>
+                  <h4>List the databases that already exist</h4>
+                  <pre class="sql">\l</pre>
+                  <p>Lines starting with a backslash are not SQL — they are <code>psql</code> meta-commands, handled by the client. <code>\l</code> asks the server for its database list:</p>
+                  <pre class="out">
+                                                  List of databases
+     Name      |  Owner   | Encoding | Locale Provider | Collate | Ctype | Locale
+---------------+----------+----------+-----------------+---------+-------+--------
+ blahworld     | postgres | UTF8     | libc            | C       | C     |
+ my_special_db | postgres | UTF8     | libc            | C       | C     |
+ postgres      | postgres | UTF8     | libc            | C       | C     |
+ template0     | postgres | UTF8     | libc            | C       | C     |
+ template1     | postgres | UTF8     | libc            | C       | C     |
+(5 rows)</pre
+                  >
+                  <p>
+                    Your list will differ — mine happens to hold two leftovers from earlier experiments. Two names are always there: <code>postgres</code>, the maintenance database you are sitting in now, and the two
+                    <code>template</code> databases that new databases are copied from. The privileges column is trimmed here for width.
+                  </p>
+                </li>
+
+                <li>
+                  <h4>Confirm the environment works</h4>
+                  <p>Ask the server to identify itself, and run it as the skill's environment check. If you get one row back, everything below will work.</p>
+                  <pre class="sql">SELECT current_database(), current_user, version();</pre>
+                  <pre class="out">
+ current_database | current_user |                                 version
+------------------+--------------+-------------------------------------------------------------------------
+ postgres         | postgres     | PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit
+(1 row)</pre
+                  >
+                  <p><strong>Expected:</strong> 1 row, 3 columns. Note you are in the database <code>postgres</code> — that is about to change.</p>
+                </li>
+              </ol>
+
+              <h3>Meta-commands you will use</h3>
+              <p>These are typed at the <code>psql</code> prompt like commands, not terminated with a semicolon:</p>
+              <p>Commands are prefixed with a backslash (<code>\</code>) and are not SQL statements. DO NOT use semicolons after them.</p>
+              <table class="meta-table">
+                <thead>
+                  <tr>
+                    <th>Command</th>
+                    <th>What it does</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>\l</code></td>
+                    <td>List every database on the server.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\c basic_psql</code></td>
+                    <td>Connect to a different database without leaving <code>psql</code>.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\dt</code></td>
+                    <td>List the tables in the database you are connected to.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\d users</code></td>
+                    <td>Describe one table: its columns, their types, and what is nullable.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\conninfo</code></td>
+                    <td>Print which database, user, host and port this session is using.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\q</code></td>
+                    <td>Quit <code>psql</code>.</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="callout tip">
+                <p>
+                  <strong>Faster path, once you have read <em>Build it</em>.</strong> The whole lesson is also saved as one script in this folder:
+                </p>
+                <pre class="sql">psql -U postgres -f basic_psql.sql</pre>
+                <p>
+                  It is the same commands in the same order. Read the next tab first — the script is for re-running, not for learning from. Re-running is safe: it drops and rebuilds the <code>users</code> table, so you
+                  always finish at exactly eight rows. Expect one red line on a second run:
+                </p>
+                <pre class="out is-error">ERROR:  database "basic_psql" already exists</pre>
+                <p>
+                  That is the <code>CREATE DATABASE</code> line noticing the work is already done. <code>psql</code> keeps going and everything after it succeeds. The only path that is <em>not</em> safe is running the
+                  <code>INSERT</code> repeatedly without the drop — that is how you get sixteen rows and a lesson whose every expected count is wrong.
+                </p>
+              </div>
+            </section>
+
+            <!-- ==================== 3. BUILD IT ==================== -->
+            <section id="panel-build" role="tabpanel" aria-labelledby="tab-build" tabindex="0" hidden>
+              <h2>Build it</h2>
+              <div class="meta">Worked example · eight statements · every output below is real</div>
+
+              <p>This is the whole job, in the order I ran it. Type along; the output you get back should match what is printed under each command.</p>
+
+              <ol class="steps">
+                <li>
+                  <h4>Create the database</h4>
+                  <pre class="sql">CREATE DATABASE basic_psql;</pre>
+                  <pre class="out">CREATE DATABASE</pre>
+                  <p>
+                    <strong>Why:</strong> a database is the container everything else lives inside. You are currently sitting in <code>postgres</code>, the maintenance database the server keeps for itself, and putting
+                    your practice tables there is like storing your notes in Windows' <code>System32</code>. <code>CREATE DATABASE</code> makes a fresh, empty one. The reply is a <em>command tag</em> — the server
+                    repeating back what it did, not a result set.
+                  </p>
+                </li>
+
+                <li>
+                  <h4>Move into it</h4>
+                  <pre class="sql">\c basic_psql</pre>
+                  <pre class="out">You are now connected to database "basic_psql" as user "postgres".</pre>
+                  <p>
+                    <strong>Why:</strong> creating a database does not enter it. <code>\c</code> reconnects the current session, and from here on every statement lands in <code>basic_psql</code>. Confirm it two ways: the
+                    prompt is now <code>basic_psql=#</code>, and <code>\conninfo</code> agrees.
+                  </p>
+                </li>
+
+                <li>
+                  <h4>Create the table</h4>
+                  <pre class="sql">
+CREATE TABLE users (
+    firstname text,
+    lastname  text,
+    age       integer,
+    email     text
+);</pre
+                  >
+                  <pre class="out">CREATE TABLE</pre>
+                  <p>
+                    <strong>Why:</strong> a table is a named list of columns, and every column must declare a type before it can hold anything. The names are yours to choose; the types are the database's business, and
+                    they are what stop an age from being the word <em>thirty</em>. Two details worth noticing: statements end with a semicolon, and the line breaks and indentation are only for humans — the server sees
+                    one statement either way.
+                  </p>
+                </li>
+
+                <li>
+                  <h4>Check what the database actually stored</h4>
+                  <pre class="sql">\d users</pre>
+                  <pre class="out">
+                 Table "public.users"
+  Column   |  Type   | Collation | Nullable | Default
+-----------+---------+-----------+----------+---------
+ firstname | text    |           |          |
+ lastname  | text    |           |          |
+ age       | integer |           |          | 
+ email     | text    |           |          | </pre
+                  >
+                  <p>
+                    <strong>Why:</strong> <code>\d</code> reads the table back out of the database, so it shows you what was really created rather than what you meant to create. Note <code>public.users</code>: Postgres
+                    put your table in a schema called <code>public</code>, and <code>Nullable</code> is blank for all four columns, meaning every one of them will accept a missing value. That is a decision you made by
+                    not making one, and exercise 2 is where it bites.
+                  </p>
+                </li>
+
+                <li>
+                  <h4>Insert the rows</h4>
+                  <pre class="sql">
+INSERT INTO users (firstname, lastname, age, email) VALUES
+    ('Mary',  'Johnson', 34,   'mary.johnson@example.com'),
+    ('James', 'Smith',   41,   'james.smith@example.com'),
+    ('Aroha', 'Ngata',   29,   'aroha.ngata@example.com'),
+    ('Liam',  'O''Brien', 52,  'liam.obrien@example.com'),
+    ('Priya', 'Sharma',  NULL, 'priya.sharma@example.com'),
+    ('Tomas', 'Novak',   45,   NULL),
+    ('Mary',  'Johnson', 34,   'Mary.Johnson@Example.Com'),
+    ('Sofia', 'Rossi',   17,   'sofia.rossi@example.com');</pre
+                  >
+                  <pre class="out">INSERT 0 8</pre>
+                  <p>
+                    <strong>Why:</strong> one statement, eight rows. Read the tag <code>INSERT 0 8</code> right to left: <strong>8</strong> is the number of rows inserted, and the <code>0</code> is a legacy object
+                    identifier that Postgres has reported since before you were born — ignore it, but never ignore the second number.
+                  </p>
+                  <p>
+                    Three things in that statement are deliberate. <code>NULL</code> is a keyword written without quotes, meaning <em>no value here</em> — Priya has no recorded age and Tomas has no email.
+                    <code>O''Brien</code> is how an apostrophe is escaped inside a string: two single quotes, because one would end the string early. And the two Mary Johnson rows are not a typo — duplicated people are
+                    the normal state of real data.
+                  </p>
+                </li>
+
+                <li>
+                  <h4>Read it back</h4>
+                  <pre class="sql">SELECT firstname, lastname, age, email FROM users;</pre>
+                  <pre class="out">
+ firstname | lastname | age |          email
+-----------+----------+-----+--------------------------
+ Mary      | Johnson  |  34 | mary.johnson@example.com
+ James     | Smith    |  41 | james.smith@example.com
+ Aroha     | Ngata    |  29 | aroha.ngata@example.com
+ Liam      | O'Brien  |  52 | liam.obrien@example.com
+ Priya     | Sharma   |     | priya.sharma@example.com
+ Tomas     | Novak    |  45 |
+ Mary      | Johnson  |  34 | Mary.Johnson@Example.Com
+ Sofia     | Rossi    |  17 | sofia.rossi@example.com
+(8 rows)</pre
+                  >
+                  <p>
+                    <strong>Why:</strong> <code>SELECT</code> names the columns you want and <code>FROM</code> names the table to take them from. The gaps in the <code>age</code> and <code>email</code> columns are the
+                    <code>NULL</code>s, printed as blank space rather than the word NULL — worth remembering, because a blank in the output does not always mean a blank in the data.
+                  </p>
+                  <p>
+                    One honesty note: this output came back in insertion order, but you did not ask for any order. Without <code>ORDER BY</code>, the server is free to return rows in any order it likes, and it will
+                    change its mind as the table grows.
+                  </p>
+                </li>
+              </ol>
+
+              <p class="expected">
+                <strong>Result of the worked example:</strong> 8 rows, columns <code>firstname, lastname, age, email</code>. If you have that, the database exists, the table exists, and the data is in it.
+              </p>
+
+              <div class="callout warn">
+                <p><strong>Try breaking it once, on purpose.</strong> The type you chose in step 3 is enforced, not decorative. Paste text into the <code>age</code> column and the whole statement is rejected:</p>
+                <pre class="sql">
+INSERT INTO users (firstname, lastname, age, email)
+VALUES ('Test', 'Row', 'thirty', 'test@example.com');</pre
+                >
+                <pre class="out is-error">
+ERROR:  invalid input syntax for type integer: "thirty"
+LINE 2: VALUES ('Test', 'Row', 'thirty', 'test@example.com');
+                               ^</pre
+                >
+                <p>The row was not added — check with <code>SELECT count(*) FROM users;</code> and you still get 8. A failed statement is not a half-finished statement.</p>
+              </div>
+            </section>
+
+            <!-- ==================== 4. PRACTICE ==================== -->
+            <section id="panel-practice" role="tabpanel" aria-labelledby="tab-practice" tabindex="0" hidden>
+              <h2>Practice</h2>
+              <div class="meta">One guided exercise, then four problems</div>
+
+              <p>
+                Every problem runs against the same <code>users</code> table you just built, and each one adds a single new idea to the one before it. Answers are on the <strong>Solutions</strong> tab — do not open it
+                until you have either a row count that matches or a clear question about why it does not.
+              </p>
+
+              <div class="card">
+                <h3>Guided exercise — fill in the gaps</h3>
+                <p><strong>Goal:</strong> show first name, last name and email for everyone aged 30 or over, youngest first. The structure is supplied; you supply the three missing pieces.</p>
+                <pre class="sql">
+SELECT firstname, lastname, email
+FROM   &lt;which table?&gt;
+WHERE  &lt;which rows survive?&gt;
+ORDER BY &lt;by what, and in which direction?&gt;;</pre
+                >
+                <p class="expected"><strong>Expected:</strong> 5 rows, 3 columns.</p>
+                <details class="hints">
+                  <summary>Hints</summary>
+                  <ol>
+                    <li><span class="step-name">Restate.</span> You are keeping a subset of the rows and presenting them in a stated order — one clause decides membership, another decides sequence.</li>
+                    <li>
+                      <span class="step-name">Point.</span> <code>WHERE</code> filters rows; <code>ORDER BY</code> sorts them. Ascending is the default, and "youngest first" is the direction the numbers already run in.
+                    </li>
+                    <li>
+                      <span class="step-name">Edge.</span> "30 or over" is a boundary, so decide deliberately between <code>&gt;</code> and <code>&gt;=</code>: one of them silently drops the 34-year-olds and every other
+                      exact-thirty. There is nobody aged exactly 30 in this table, so your count is the only thing that will tell you which you picked.
+                    </li>
+                  </ol>
+                </details>
+              </div>
+
+              <div class="card">
+                <h3>Exercise 1 — who is old enough to sign?</h3>
+                <p>List every user aged 18 or over, oldest first. Show <code>firstname</code>, <code>lastname</code> and <code>email</code>.</p>
+                <p class="expected"><strong>Expected:</strong> 6 rows, columns <code>firstname, lastname, email</code>.</p>
+                <p><strong>Check your answer:</strong></p>
+                <pre class="sql">
+SELECT count(*) AS rows_returned, min(age) AS youngest, max(age) AS oldest
+FROM users WHERE age &gt;= 18;   -- expected: 6 | 29 | 52</pre
+                >
+                <details class="hints">
+                  <summary>Hints</summary>
+                  <ol>
+                    <li><span class="step-name">Restate.</span> This is the guided exercise with a different boundary and the opposite direction — the shape of the query does not change.</li>
+                    <li><span class="step-name">Point.</span> <code>WHERE age &gt;= 18</code> chooses the rows, <code>ORDER BY age DESC</code> puts the largest first.</li>
+                    <li>
+                      <span class="step-name">Edge.</span> Rows leave this result for two different reasons, and only one of them is "too young". A comparison against a missing value is neither true nor false, so the row
+                      with no age is not returned — and it is not returned by <code>&lt; 18</code> either. If your count is 5, look at which of the eight rows never appears in any of your results.
+                    </li>
+                  </ol>
+                </details>
+              </div>
+
+              <div class="card">
+                <h3>Exercise 2 — how old is everyone, on average?</h3>
+                <p>Report two numbers in one row: how many of the eight rows actually have an age recorded, and the average of the ages you do have, rounded to one decimal place.</p>
+                <p class="expected"><strong>Expected:</strong> 1 row, 2 columns. One of them is <strong>7</strong>.</p>
+                <p><strong>Check your answer:</strong></p>
+                <pre class="sql">SELECT count(age) AS n, sum(age) AS total FROM users;   -- expected: 7 | 252</pre>
+                <p>Your average must equal <code>252 / 7</code>. If your two numbers are 7 and 252, your average is right by construction.</p>
+                <details class="hints">
+                  <summary>Hints</summary>
+                  <ol>
+                    <li><span class="step-name">Restate.</span> You are collapsing eight rows into one summary row. That is a different kind of query from everything so far.</li>
+                    <li>
+                      <span class="step-name">Point.</span> <code>count()</code> and <code>avg()</code> are aggregates — they take a column and return one value. <code>count(*)</code> counts rows;
+                      <code>count(age)</code> counts rows where the age is present. Those are two different questions, and this exercise wants the second one. <code>round(value, 1)</code> tidies the average.
+                    </li>
+                    <li>
+                      <span class="step-name">Edge.</span> Your divisor is 7, not 8. If your average comes out as 31.5, you divided by 8 — you counted a row that contributes nothing to the sum. A missing value is skipped
+                      by <code>avg()</code>, not treated as zero.
+                    </li>
+                  </ol>
+                </details>
+              </div>
+
+              <div class="card">
+                <h3>Exercise 3 — the same person, twice</h3>
+                <p>
+                  One person appears in the table more than once. Write a query that returns each first-name/last-name pair that occurs more than once, together with the number of times it occurs. No structure given this
+                  time.
+                </p>
+                <p class="expected"><strong>Expected:</strong> 1 row, 3 columns.</p>
+                <p><strong>Check your answer:</strong></p>
+                <pre class="sql">
+SELECT count(*) AS distinct_people
+FROM (SELECT DISTINCT firstname, lastname FROM users) AS people;   -- expected: 7</pre
+                >
+                <p>Eight rows describe seven distinct people, so exactly one name repeats.</p>
+                <details class="hints">
+                  <summary>Hints</summary>
+                  <ol>
+                    <li><span class="step-name">Restate.</span> You want one output row per person rather than one per input row — a summary computed per group.</li>
+                    <li>
+                      <span class="step-name">Point.</span> <code>GROUP BY firstname, lastname</code> defines what "the same person" means; with groups in place, <code>count(*)</code> counts the rows inside each one.
+                    </li>
+                    <li>
+                      <span class="step-name">Edge.</span> Filtering the groups is a different clause from filtering the rows: <code>WHERE</code> runs before grouping and cannot see <code>count(*)</code>. If your output
+                      lists all seven people, you filtered at the wrong level.
+                    </li>
+                  </ol>
+                </details>
+              </div>
+
+              <div class="card">
+                <h3>Exercise 4 — Mary, without guessing her capitals</h3>
+                <p>
+                  One email address in the table was typed with capital letters. Write a query that finds <em>every</em> row whose email address is <code>mary.johnson@example.com</code>, regardless of how it was
+                  capitalised. Show <code>firstname</code> and <code>email</code>.
+                </p>
+                <p class="expected"><strong>Expected:</strong> 2 rows, columns <code>firstname, email</code>.</p>
+                <p><strong>Check your answer:</strong></p>
+                <pre class="sql">SELECT email FROM users WHERE email &lt;&gt; lower(email);   -- expected: 1 row</pre>
+                <p>That single row is the odd one out. If your exercise query returned only one row, you compared against the raw column and it did not match.</p>
+                <details class="hints">
+                  <summary>Hints</summary>
+                  <ol>
+                    <li><span class="step-name">Restate.</span> This is exercise 1's filter with one change: equality has to stop caring about case.</li>
+                    <li>
+                      <span class="step-name">Point.</span> The <code>=</code> operator compares text exactly, character by character. Either normalise both sides (<code>lower(email) = lower('...')</code>) or use the
+                      case-insensitive operator <code>ILIKE</code>.
+                    </li>
+                    <li>
+                      <span class="step-name">Edge.</span> Only one of the two rows is already lowercase, so a query that returns one row has compared the stored value rather than a normalised one. Nothing is wrong with
+                      your quotation marks — the two addresses really are different strings to the database.
+                    </li>
+                  </ol>
+                </details>
+              </div>
+            </section>
+
+            <!-- ==================== 5. SOLUTIONS ==================== -->
+            <section id="panel-solutions" role="tabpanel" aria-labelledby="tab-solutions" tabindex="0" hidden>
+              <h2>Solutions</h2>
+              <div class="meta">Runnable as written · output shown is what the server returned</div>
+
+              <h3>Guided exercise</h3>
+              <pre class="sql">
+SELECT firstname, lastname, email
+FROM users
+WHERE age &gt;= 30
+ORDER BY age;</pre
+              >
+              <pre class="out">
+ firstname | lastname |          email
+-----------+----------+--------------------------
+ Mary      | Johnson  | mary.johnson@example.com
+ Mary      | Johnson  | Mary.Johnson@Example.Com
+ James     | Smith    | james.smith@example.com
+ Tomas     | Novak    |
+ Liam      | O'Brien  | liam.obrien@example.com
+(5 rows)</pre
+              >
+              <p>Five rows, and the two Marys sit next to each other because they share an age — their relative order is not something the query promised. Note the blank email on Tomas: the row is still a row.</p>
+
+              <h3>Exercise 1 — 18 or over, oldest first</h3>
+              <pre class="sql">
+SELECT firstname, lastname, email
+FROM users
+WHERE age &gt;= 18
+ORDER BY age DESC;</pre
+              >
+              <pre class="out">
+ firstname | lastname |          email
+-----------+----------+--------------------------
+ Liam      | O'Brien  | liam.obrien@example.com
+ Tomas     | Novak    |
+ James     | Smith    | james.smith@example.com
+ Mary      | Johnson  | mary.johnson@example.com
+ Mary      | Johnson  | Mary.Johnson@Example.Com
+ Aroha     | Ngata    | aroha.ngata@example.com
+(6 rows)</pre
+              >
+              <p>
+                Six rows, not seven: Sofia is 17, and Priya is neither 18 nor younger. The near-miss to avoid is writing <code>WHERE age &gt; 18</code>, which drops nobody in this particular table — check the count and
+                you cannot tell you were wrong. That is exactly why the exercise gives you the expected count.
+              </p>
+
+              <h3>Exercise 2 — count and average</h3>
+              <pre class="sql">
+SELECT count(age) AS with_age, round(avg(age), 1) AS average_age
+FROM users;</pre
+              >
+              <pre class="out">
+ with_age | average_age
+----------+-------------
+        7 |        36.0
+(1 row)</pre
+              >
+              <p>
+                <code>count(age)</code> skips the missing value; <code>avg(age)</code> skips it too, and divides by 7, not 8. The near-miss is <code>count(*)</code> in the numerator or the denominator:
+                <code>252 / 8</code> is 31.5, an answer that looks entirely plausible and is wrong.
+              </p>
+
+              <h3>Exercise 3 — repeated people</h3>
+              <pre class="sql">
+SELECT firstname, lastname, count(*) AS copies
+FROM users
+GROUP BY firstname, lastname
+HAVING count(*) &gt; 1;</pre
+              >
+              <pre class="out">
+ firstname | lastname | copies
+-----------+----------+--------
+ Mary      | Johnson  |      2
+(1 row)</pre
+              >
+              <p>
+                The near-miss is filtering with <code>WHERE count(*) &gt; 1</code>, which errors because <code>WHERE</code> runs before the groups exist. Groups are filtered by <code>HAVING</code>, and the clause order
+                in the statement is not the order the server executes it in.
+              </p>
+
+              <h3>Exercise 4 — case-insensitive match</h3>
+              <pre class="sql">
+SELECT firstname, email
+FROM users
+WHERE lower(email) = 'mary.johnson@example.com';</pre
+              >
+              <pre class="out">
+ firstname |          email
+-----------+--------------------------
+ Mary      | mary.johnson@example.com
+ Mary      | Mary.Johnson@Example.Com
+(2 rows)</pre
+              >
+              <p>The equivalent with the other tool:</p>
+              <pre class="sql">SELECT firstname, email FROM users WHERE email ILIKE 'mary.johnson@example.com';</pre>
+              <p>
+                The near-miss is <code>WHERE email = 'mary.johnson@example.com'</code>, which returns one row and looks correct until you remember there are two Marys. Note that <code>ILIKE</code> also treats
+                <code>%</code> and <code>_</code> as wildcards, so <code>lower()</code> on both sides is the safer habit for exact matching.
+              </p>
+
+              <h3>Self-check</h3>
+              <ul class="checklist">
+                <li><code>\dt</code> lists one table, <code>users</code>, and <code>\d users</code> shows four columns of types <code>text, text, integer, text</code>.</li>
+                <li><code>SELECT count(*) FROM users;</code> returns <strong>8</strong>.</li>
+                <li><code>SELECT count(age) FROM users;</code> returns <strong>7</strong>.</li>
+                <li>Your exercise 2 average is <strong>36.0</strong>.</li>
+                <li>Your exercise 3 output names exactly one repeated person.</li>
+                <li>Your exercise 4 output returns <strong>2</strong> rows.</li>
+              </ul>
+            </section>
+
+            <!-- ==================== 6. TRAPS ==================== -->
+            <section id="panel-traps" role="tabpanel" aria-labelledby="tab-traps" tabindex="0" hidden>
+              <h2>Traps</h2>
+              <div class="meta">Three wrong mental models this topic reliably produces</div>
+
+              <div class="card">
+                <h3>"A missing value is just an empty one — I can compare with it."</h3>
+                <p>
+                  <strong>Why it is tempting:</strong> a blank cell looks like a blank string, and every other value in the table behaves like a value. So you expect <code>age &lt;&gt; 40</code> to return the seven rows
+                  that are not 40.
+                </p>
+                <p><strong>What actually happens:</strong> <code>NULL</code> means <em>unknown</em>. Any comparison with it returns unknown, and unknown is not true, so the row is filtered out.</p>
+                <pre class="sql">SELECT count(*) AS rows_total, count(age) AS rows_with_age FROM users;</pre>
+                <pre class="out">
+ rows_total | rows_with_age
+------------+---------------
+          8 |             7
+(1 row)</pre
+                >
+                <pre class="sql">SELECT firstname, lastname, age FROM users WHERE age &lt;&gt; 40 ORDER BY age;</pre>
+                <pre class="out">
+ firstname | lastname | age
+-----------+----------+-----
+ Sofia     | Rossi    |  17
+ Aroha     | Ngata    |  29
+ Mary      | Johnson  |  34
+ Mary      | Johnson  |  34
+ James     | Smith    |  41
+ Tomas     | Novak    |  45
+ Liam      | O'Brien  |  52
+(7 rows)</pre
+                >
+                <p>
+                  Seven rows — but from a table of eight, and Priya's age is not 40, so she should be there. The filter removed her without saying so. The same misunderstanding shows up in sorting, where the word
+                  "unknown" has to be placed somewhere:
+                </p>
+                <pre class="sql">SELECT firstname, age FROM users ORDER BY age DESC LIMIT 3;</pre>
+                <pre class="out">
+ firstname | age
+-----------+-----
+ Priya     |
+ Liam      |  52
+ Tomas     |  45
+(3 rows)</pre
+                >
+                <p>Postgres sorts <code>NULL</code> as if it were larger than every real value, so "highest first" opens with a blank. Write <code>ORDER BY age DESC NULLS LAST</code> when you care.</p>
+              </div>
+
+              <div class="card">
+                <h3>"Text comparison ignores capitalisation."</h3>
+                <p>
+                  <strong>Why it is tempting:</strong> email addresses, file names and web addresses are case-insensitive almost everywhere else you meet them, so two addresses that differ only in case feel like the same
+                  address.
+                </p>
+                <p><strong>What actually happens:</strong> Postgres compares text exactly. These two queries differ by one function and by one row:</p>
+                <pre class="sql">SELECT firstname, email FROM users WHERE email = 'mary.johnson@example.com';</pre>
+                <pre class="out">
+ firstname |          email
+-----------+--------------------------
+ Mary      | mary.johnson@example.com
+(1 row)</pre
+                >
+                <pre class="sql">SELECT firstname, email FROM users WHERE lower(email) = 'mary.johnson@example.com';</pre>
+                <pre class="out">
+ firstname |          email
+-----------+--------------------------
+ Mary      | mary.johnson@example.com
+ Mary      | Mary.Johnson@Example.Com
+(2 rows)</pre
+                >
+                <p>
+                  If your data has this problem at scale, the fix is a normalising constraint or a case-insensitive index — not a <code>lower()</code> wrapped around every query forever. For now, the lesson is simply
+                  that <code>=</code> means exactly.
+                </p>
+              </div>
+
+              <div class="card">
+                <h3>"A table name is whatever I typed."</h3>
+                <p><strong>Why it is tempting:</strong> you wrote <code>CREATE TABLE users</code>, and elsewhere you have seen people write <code>Users</code>. Surely the database keeps the capital letter.</p>
+                <p>
+                  <strong>What actually happens:</strong> an unquoted identifier is folded to lower case before it is stored. So <code>Users</code> and <code>users</code> are the same table, and the only way to get a
+                  capital letter into a name is to quote it — after which it is a different name, and a strict one:
+                </p>
+                <pre class="sql">SELECT count(*) AS unquoted_works FROM Users;</pre>
+                <pre class="out">
+ unquoted_works
+----------------
+              8
+(1 row)</pre
+                >
+                <pre class="sql">SELECT count(*) AS quoted_fails FROM "Users";</pre>
+                <pre class="out is-error">
+ERROR:  relation "Users" does not exist
+LINE 1: SELECT count(*) AS quoted_fails FROM "Users";</pre
+                >
+                <p>
+                  The practical rule: write identifiers in lower case with underscores, never quote them, and you will never have to remember this. <code>\dt</code> is the tie-breaker whenever you are unsure what a table
+                  is really called.
+                </p>
+              </div>
+            </section>
+
+            <!-- ==================== 7. TRANSFER ==================== -->
+            <section id="panel-transfer" role="tabpanel" aria-labelledby="tab-transfer" tabindex="0" hidden>
+              <h2>Transfer</h2>
+              <div class="meta">Same structure, different story · no new syntax</div>
+
+              <p>Nothing below needs a clause you have not already used. That is the point: the surface story changes, the structure does not.</p>
+
+              <div class="card">
+                <h3>A small library</h3>
+                <p>Create a table <code>books</code> in the same <code>basic_psql</code> database, with the same four-column shape as <code>users</code>:</p>
+                <ul>
+                  <li><code>title</code> — text</li>
+                  <li><code>author</code> — text</li>
+                  <li><code>year</code> — integer</li>
+                  <li><code>isbn</code> — text</li>
+                </ul>
+                <p>Insert six books of your own choosing, and make your data carry the same three awkwardnesses the <code>users</code> table carried:</p>
+                <ul>
+                  <li>one book with no <code>year</code> recorded,</li>
+                  <li>one book with no <code>isbn</code>,</li>
+                  <li>one title that appears twice (a reprint, say — same title and author).</li>
+                </ul>
+                <p>Then answer four questions with four queries:</p>
+                <ol>
+                  <li>Every book published in 1990 or later, newest first, showing title, author and year.</li>
+                  <li>How many books have a year recorded, and the average of those years.</li>
+                  <li>Which title-and-author pairs appear more than once, and how many times each.</li>
+                  <li>The book whose <code>isbn</code> is missing — the one whose ISBN you cannot look up.</li>
+                </ol>
+                <p class="expected">
+                  <strong>Check yourself the same way:</strong> before running anything, write down the row count you expect from each query and the number of columns. For question 1 over six books with one missing year,
+                  "books from 1990 on" cannot return a count you cannot predict from your own six rows.
+                </p>
+                <details class="hints">
+                  <summary>Hints</summary>
+                  <ol>
+                    <li><span class="step-name">Restate.</span> Questions 1 and 4 are filters, question 2 is an aggregate, question 3 is a grouped aggregate — the same four shapes you have already written once.</li>
+                    <li><span class="step-name">Point.</span> Only the names changed: <code>year</code> takes the role <code>age</code> played, <code>isbn</code> takes the role <code>email</code> played.</li>
+                    <li>
+                      <span class="step-name">Edge.</span> Question 4 is the one that looks new and is not: "missing" is never tested with <code>=</code>. Equality against a missing value is unknown, so a filter for the
+                      absent ISBN needs the operator designed for it — <code>IS NULL</code>.
+                    </li>
+                  </ol>
+                </details>
+              </div>
+
+              <h3>If that felt easy, that is the real result</h3>
+              <p>
+                You created a database, created a typed table, inserted rows with an escaped quote, and queried them four different ways. The next rung — giving the table a primary key, updating a row, and deleting one —
+                reuses every one of these clauses, so it is a short step from here rather than a new subject.
+              </p>
+
+              <h3>Before you close the tab</h3>
+              <ul class="checklist">
+                <li>I can say what <code>\l</code>, <code>\c</code>, <code>\dt</code> and <code>\d table</code> do without looking them up.</li>
+                <li>I know why <code>count(*)</code> was 8 and <code>count(age)</code> was 7.</li>
+                <li>I know why <code>WHERE email = 'mary.johnson@example.com'</code> missed a row.</li>
+                <li>I can predict the row count of a query before running it.</li>
+              </ul>
+
+              <p>The <strong>Cheatsheet</strong> tab at the end is the reference version of everything above — every command this lesson used, plus the ones you will reach for next.</p>
+            </section>
+
+            <!-- ==================== 8. CHEATSHEET ==================== -->
+            <section id="panel-cheatsheet" role="tabpanel" aria-labelledby="tab-cheatsheet" tabindex="0" hidden>
+              <h2>psql cheatsheet</h2>
+              <div class="meta">Reference · everything this lesson used, plus what you will want next</div>
+
+              <p class="lesson-lede">
+                Commands starting with a backslash are <em>meta-commands</em>: <code>psql</code> itself handles them, so they take no semicolon and are not case-sensitive. Everything else is SQL, and SQL is not executed
+                until you end it with <code>;</code>.
+              </p>
+
+              <div class="callout warn">
+                <p>
+                  <strong>About the interactive ones.</strong> <code>\e</code>, <code>\watch</code>, <code>\s</code> and <code>\?</code> need a real terminal session — they behave differently, or not at all, when
+                  commands are piped in from a file, which is how every output on this page was produced. Everything else here was run against your server.
+                </p>
+              </div>
+
+              <h3>Getting in and out</h3>
+              <table class="meta-table sheet">
+                <thead>
+                  <tr>
+                    <th>Command</th>
+                    <th>What it does</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>psql -U postgres</code></td>
+                    <td>Connect to the local server as the <code>postgres</code> role. Without <code>-U</code> you get <code>role "OEM" does not exist</code>.</td>
+                  </tr>
+                  <tr>
+                    <td><code>psql -U postgres -d basic_psql</code></td>
+                    <td>Connect and go straight into one database instead of <code>postgres</code>.</td>
+                  </tr>
+                  <tr>
+                    <td><code>psql -h host -p 5432 -U user -d db</code></td>
+                    <td>The full form, for a server that is not on your machine.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\c basic_psql</code></td>
+                    <td>Switch database without leaving the session.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\conninfo</code></td>
+                    <td>Print the database, user, host and port of the session you are in.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\q</code></td>
+                    <td>Quit. Ctrl+D does the same.</td>
+                  </tr>
+                  <tr>
+                    <td>Ctrl+C</td>
+                    <td>Cancel the query you are waiting on, without quitting.</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <h3>Looking around</h3>
+              <table class="meta-table sheet">
+                <thead>
+                  <tr>
+                    <th>Command</th>
+                    <th>What it does</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>\l</code></td>
+                    <td>List the databases on the server.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\l+</code></td>
+                    <td>Same, with sizes and descriptions.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\dt</code></td>
+                    <td>List the tables in the current database.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\dt+</code></td>
+                    <td>Same, with size and description — <code>users</code> is 16 kB.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\d users</code></td>
+                    <td>Describe one table: columns, types, nullability. Your first reflex when a query fails.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\d+ users</code></td>
+                    <td>Same, with storage details and any indexes on it.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\di</code></td>
+                    <td>List indexes. On your <code>users</code> table right now this answers <em>Did not find any indexes.</em> — it has no primary key yet.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\dn</code></td>
+                    <td>List schemas. You have been working in <code>public</code> all along.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\du</code></td>
+                    <td>List roles. Yours is <code>postgres</code>, with Superuser and Create DB.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\dv</code> / <code>\ds</code> / <code>\df</code></td>
+                    <td>List views / sequences / functions.</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <h3>Running and editing SQL</h3>
+              <table class="meta-table sheet">
+                <thead>
+                  <tr>
+                    <th>Command</th>
+                    <th>What it does</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>;</code></td>
+                    <td>
+                      Nothing runs until you type it. Until then the prompt changes from <code>=#</code> to <code>-#</code>, which is your signal that <code>psql</code> is still waiting for the end of the statement.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><code>\i basic_psql.sql</code></td>
+                    <td>Run a file from inside <code>psql</code> — the in-session twin of <code>psql -f</code>.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\e</code></td>
+                    <td>Open the current query buffer in your editor.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\p</code> / <code>\r</code> / <code>\g</code></td>
+                    <td>Print the query buffer / clear it / run it.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\h SELECT</code></td>
+                    <td>The syntax reference for one statement. <code>\h</code> alone lists every statement it knows.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\?</code></td>
+                    <td>Help on every meta-command — the authoritative version of this page.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\s</code></td>
+                    <td>Your command history for this session; <code>\s history.txt</code> saves it.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\! echo hello</code></td>
+                    <td>Run a shell command without leaving <code>psql</code>.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\watch 5</code></td>
+                    <td>Re-run the last query every 5 seconds until you press Ctrl+C. Useful for watching a count change.</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <h3>Reading output comfortably</h3>
+              <table class="meta-table sheet">
+                <thead>
+                  <tr>
+                    <th>Command</th>
+                    <th>What it does</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>\pset null '(missing)'</code></td>
+                    <td>Print <code>NULL</code> as a word instead of a blank. The single most useful setting for this lesson — it makes missing data impossible to skim past:</td>
+                  </tr>
+                  <tr>
+                    <td><code>\pset null ''</code></td>
+                    <td>Put it back to blank.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\x</code></td>
+                    <td>Toggle expanded output, one field per line, for rows too wide to read across:</td>
+                  </tr>
+                  <tr>
+                    <td><code>\x auto</code></td>
+                    <td>Use expanded output only when the row does not fit.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\timing</code></td>
+                    <td>Report how long each statement took — <code>Time: 1.731 ms</code> after the result.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\pset pager off</code></td>
+                    <td>Never open a pager; print everything straight to the screen.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\pset border 2</code></td>
+                    <td>Draw box borders around result tables.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\o out.txt</code></td>
+                    <td>Send query results to a file; <code>\o</code> on its own sends them back to the screen.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\H</code> / <code>\a</code> / <code>\f ','</code></td>
+                    <td>HTML output / unaligned output / change the field separator.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\C 'Users'</code></td>
+                    <td>Give the next result a title.</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <p>Those two are worth seeing, because both change what you <em>think</em> the data says:</p>
+              <pre class="sql">
+\pset null '(missing)'
+SELECT firstname, age, email FROM users WHERE age IS NULL OR email IS NULL;</pre
+              >
+              <pre class="out">
+ firstname |    age    |          email
+-----------+-----------+--------------------------
+ Priya     | (missing) | priya.sharma@example.com
+ Tomas     |        45 | (missing)
+(2 rows)</pre
+              >
+              <pre class="sql">
+\x
+SELECT firstname, age FROM users WHERE age IS NULL;</pre
+              >
+              <pre class="out">
+-[ RECORD 1 ]----
+firstname | Priya
+age       |</pre
+              >
+              <p>The lesson's blanks are suddenly explicit, and the wide row now reads down instead of across.</p>
+
+              <h3>Files and bulk data</h3>
+              <table class="meta-table sheet">
+                <thead>
+                  <tr>
+                    <th>Command</th>
+                    <th>What it does</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>\copy users TO 'users.csv' CSV HEADER</code></td>
+                    <td>Write the table out to a CSV. Run on your eight rows it answers <code>COPY 8</code>.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\copy users FROM 'users.csv' CSV HEADER</code></td>
+                    <td>Read a CSV back in. This is the fastest way to load real data.</td>
+                  </tr>
+                  <tr>
+                    <td><code>COPY users FROM '/path/on/server' CSV</code></td>
+                    <td>
+                      The server-side twin, and a classic trap: the server opens the file, so the path is relative to the <em>server</em>, not to you, and it needs superuser rights. <code>\copy</code> has the backslash
+                      and runs on your side — prefer it.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><code>\gset</code></td>
+                    <td>Run a query and store the single resulting row in <code>psql</code> variables.</td>
+                  </tr>
+                  <tr>
+                    <td><code>\set who 'Mary'</code> then <code>:'who'</code></td>
+                    <td>Define a variable, then substitute it into a statement as a properly quoted string.</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <p>What that export actually produced — note how the two missing values left the building as empty fields between commas, not as the word <code>NULL</code>:</p>
+              <pre class="out">
+firstname,lastname,age,email
+Mary,Johnson,34,mary.johnson@example.com
+James,Smith,41,james.smith@example.com
+Aroha,Ngata,29,aroha.ngata@example.com
+Liam,O'Brien,52,liam.obrien@example.com
+Priya,Sharma,,priya.sharma@example.com
+Tomas,Novak,45,
+Mary,Johnson,34,Mary.Johnson@Example.Com
+Sofia,Rossi,17,sofia.rossi@example.com</pre
+              >
+              <p>That is why <code>\pset null</code> matters on the way in: a CSV cannot tell you whether a field was empty or missing.</p>
+
+              <h3>The SQL you have already used</h3>
+              <table class="meta-table sheet">
+                <thead>
+                  <tr>
+                    <th>Statement</th>
+                    <th>What it does</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>CREATE DATABASE basic_psql;</code></td>
+                    <td>Make an empty database to work inside.</td>
+                  </tr>
+                  <tr>
+                    <td><code>CREATE TABLE users (firstname text, lastname text, age integer, email text);</code></td>
+                    <td>Make a table; every column declares its type.</td>
+                  </tr>
+                  <tr>
+                    <td><code>INSERT INTO users (...) VALUES (...), (...);</code></td>
+                    <td>Add rows. <code>''</code> escapes a quote inside a string; <code>NULL</code> means no value here.</td>
+                  </tr>
+                  <tr>
+                    <td><code>SELECT firstname, age FROM users;</code></td>
+                    <td>Choose columns from a table.</td>
+                  </tr>
+                  <tr>
+                    <td><code>WHERE age &gt;= 18</code></td>
+                    <td>Keep only the rows the condition is true for. Rows it cannot decide about are dropped.</td>
+                  </tr>
+                  <tr>
+                    <td><code>ORDER BY age DESC</code></td>
+                    <td>Sort. <code>NULL</code> sorts as if it were larger than every real value.</td>
+                  </tr>
+                  <tr>
+                    <td><code>LIMIT 3</code></td>
+                    <td>Return at most three rows.</td>
+                  </tr>
+                  <tr>
+                    <td><code>count(*)</code> / <code>count(age)</code></td>
+                    <td>Count rows / count rows where the age is present. 8 versus 7.</td>
+                  </tr>
+                  <tr>
+                    <td><code>avg(age)</code> / <code>round(x, 1)</code></td>
+                    <td>Average the values that exist, and round the answer.</td>
+                  </tr>
+                  <tr>
+                    <td><code>GROUP BY firstname, lastname HAVING count(*) &gt; 1</code></td>
+                    <td>One output row per group, then filter the groups.</td>
+                  </tr>
+                  <tr>
+                    <td><code>age IS NULL</code> / <code>age IS NOT NULL</code></td>
+                    <td>Test for a missing value. Never with <code>=</code>.</td>
+                  </tr>
+                  <tr>
+                    <td><code>lower(email)</code> / <code>email ILIKE '...'</code></td>
+                    <td>Compare text without caring about capitals.</td>
+                  </tr>
+                  <tr>
+                    <td><code>UPDATE</code> / <code>DELETE</code> / <code>PRIMARY KEY</code> / <code>JOIN</code></td>
+                    <td>Not yet — this is the next rung, and every clause above is the ground it stands on.</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <p>All of it is one of four shapes: choose columns, choose rows, summarise rows, or change rows. The commands above are vocabulary; the shapes are the skill.</p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+
+        var tablist = document.querySelector('[role="tablist"]');
+        var tabs = Array.prototype.slice.call(tablist.querySelectorAll('[role="tab"]'));
+        var panel = document.getElementById("tab-panel");
+        var panels = tabs.map(function (tab) {
+          return document.getElementById(tab.getAttribute("aria-controls"));
+        });
+
+        function selectedIndex() {
+          for (var i = 0; i < tabs.length; i++) {
+            if (tabs[i].getAttribute("aria-selected") === "true") return i;
+          }
+          return 0;
+        }
+
+        /** Show tab at `index`; if it is already selected, toggle the panel instead. */
+        function activate(index) {
+          index = (index + tabs.length) % tabs.length;
+
+          if (index === selectedIndex() && !panel.classList.contains("is-collapsed")) {
+            panel.classList.add("is-collapsed");
+            return;
+          }
+
+          tabs.forEach(function (tab, i) {
+            var on = i === index;
+            tab.setAttribute("aria-selected", on ? "true" : "false");
+            tab.tabIndex = on ? 0 : -1;
+            panels[i].hidden = !on;
+          });
+
+          panel.classList.remove("is-collapsed");
+        }
+
+        tabs.forEach(function (tab, i) {
+          tab.addEventListener("click", function () {
+            activate(i);
+            tab.focus();
+          });
+        });
+
+        // Roving focus: arrows move between tabs and activate them (automatic activation).
+        // Enter/Space are intentionally left to the native button click so that the
+        // collapse-on-second-click behaviour is not toggled twice.
+        tablist.addEventListener("keydown", function (event) {
+          var current = tabs.indexOf(event.target);
+          if (current === -1) return;
+
+          var next;
+          switch (event.key) {
+            case "ArrowDown":
+              next = current + 1;
+              break;
+            case "ArrowUp":
+              next = current - 1;
+              break;
+            case "Home":
+              next = 0;
+              break;
+            case "End":
+              next = tabs.length - 1;
+              break;
+            default:
+              return;
+          }
+
+          event.preventDefault();
+          activate(next);
+          tabs[(next + tabs.length) % tabs.length].focus();
+        });
+      })();
+    </script>
+  </body>
+</html>

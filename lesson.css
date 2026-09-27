@@ -1,0 +1,374 @@
+/* ============================================================
+   lesson.css — additions for the basic_psql lesson page.
+   Loaded after styles.css, so it may override the shell rules.
+   ============================================================ */
+
+/* The original page parked the panel in a fixed column beside .main.
+   A lesson needs the whole row, so the panel takes the remaining width. */
+.tab-region {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.panel {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+}
+
+.panel.is-collapsed {
+  flex: 0 0 0;
+  width: 0;
+}
+
+.panel-inner {
+  width: 100%;
+  padding: 28px clamp(20px, 3vw, 44px) 72px;
+}
+
+/* Keep the scroll container full width, but hold the prose to a readable
+   measure: the scrollbar sits at the window edge, the text stays centred. */
+.panel-inner > section {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Lesson prose is body text, not muted captions. */
+.panel-inner p {
+  color: var(--text);
+}
+
+.panel-inner .meta {
+  margin-bottom: 14px;
+}
+
+.lesson-lede {
+  font-size: 16px;
+  color: var(--text-muted);
+  max-width: 70ch;
+}
+
+.panel-inner h3 {
+  margin: 30px 0 8px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+}
+
+.panel-inner h4 {
+  margin: 20px 0 6px;
+  font-size: 15.5px;
+  letter-spacing: -0.01em;
+}
+
+.panel-inner ul,
+.panel-inner ol {
+  margin: 0 0 16px;
+  padding-left: 22px;
+}
+
+.panel-inner li + li {
+  margin-top: 6px;
+}
+
+.panel-inner code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: 0.91em;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 1px 5px;
+  color: var(--text);
+}
+
+/* ---------- code + psql output blocks ---------- */
+
+pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin: 10px 0 14px;
+  overflow-x: auto;
+  color: var(--text);
+  tab-size: 4;
+}
+
+pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: inherit;
+}
+
+pre.sql {
+  border-left: 3px solid var(--accent);
+}
+
+pre.out {
+  border-left: 3px solid var(--border);
+}
+
+pre.sql::before,
+pre.out::before {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+pre.sql::before {
+  content: 'psql';
+}
+
+pre.out::before {
+  content: 'output';
+}
+
+pre.out.is-error {
+  border-left-color: #d9534f;
+}
+
+pre.out.is-error::before {
+  content: 'error';
+  color: #d9534f;
+}
+
+/* ---------- numbered step list (the worked example) ---------- */
+
+ol.steps {
+  list-style: none;
+  padding-left: 0;
+  counter-reset: step;
+  margin: 0;
+}
+
+ol.steps > li {
+  position: relative;
+  padding-left: 40px;
+  margin-top: 30px;
+}
+
+ol.steps > li:first-child {
+  margin-top: 18px;
+}
+
+ol.steps > li::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+ol.steps > li > h4 {
+  margin: 3px 0 6px;
+}
+
+ol.steps > li > p {
+  margin: 0 0 8px;
+}
+
+/* ---------- objectives ---------- */
+
+ol.objectives > li {
+  margin-top: 10px;
+}
+
+/* ---------- callouts ---------- */
+
+.callout {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  background: var(--surface-alt);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin: 18px 0;
+  font-size: 14.5px;
+}
+
+.callout p {
+  margin: 0;
+}
+
+.callout p + p {
+  margin-top: 8px;
+}
+
+.callout.warn {
+  border-left-color: #d97706;
+}
+
+.callout.tip {
+  border-left-color: #16a34a;
+}
+
+/* ---------- exercise / trap cards ---------- */
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-alt);
+  padding: 16px 18px;
+  margin: 20px 0;
+}
+
+.card > h3 {
+  margin-top: 0;
+  font-size: 16px;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.card > p:first-of-type {
+  margin-top: 6px;
+}
+
+.expected {
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  border-radius: 0 8px 8px 0;
+  padding: 8px 12px;
+  margin: 14px 0;
+  font-size: 14px;
+}
+
+/* ---------- hint ladders ---------- */
+
+details.hints {
+  margin-top: 12px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 10px 14px;
+}
+
+details.hints summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+details.hints summary:hover {
+  color: var(--accent);
+}
+
+details.hints[open] summary {
+  margin-bottom: 10px;
+}
+
+details.hints ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+details.hints li {
+  font-size: 14px;
+}
+
+details.hints li + li {
+  margin-top: 9px;
+}
+
+details.hints .step-name {
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ---------- meta-command table ---------- */
+
+table.meta-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0 18px;
+  font-size: 14px;
+}
+
+table.meta-table th,
+table.meta-table td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+table.meta-table th {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+}
+
+table.meta-table td:first-child {
+  white-space: nowrap;
+}
+
+/* ---------- links ---------- */
+
+a {
+  color: var(--accent);
+}
+
+/* ---------- cheatsheet ---------- */
+
+table.sheet {
+  font-size: 13.5px;
+}
+
+table.sheet td:first-child {
+  white-space: normal;
+}
+
+table.sheet td:first-child code {
+  white-space: nowrap;
+}
+
+table.sheet td:last-child {
+  color: var(--text-muted);
+}
+
+.sheet-lede {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+}
+
+/* ---------- checklist ---------- */
+
+ul.checklist {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul.checklist > li {
+  position: relative;
+  padding-left: 26px;
+}
+
+ul.checklist > li::before {
+  content: '\25A1';
+  position: absolute;
+  left: 2px;
+  color: var(--text-muted);
+}

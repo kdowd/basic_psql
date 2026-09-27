@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Databases, the easy way — basic_usage</title>
+    <link rel="stylesheet" href="./rootvars.css" />
+    <link rel="stylesheet" href="./menu.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      main {
+        max-width: 660px;
+        margin: 0 auto;
+        padding: 44px clamp(18px, 4vw, 40px) 90px;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(28px, 5.5vw, 38px);
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+      }
+
+      .lede {
+        margin: 0 0 40px;
+        font-size: 18px;
+        color: var(--text-muted);
+      }
+
+      h2 {
+        margin: 46px 0 16px;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--text-muted);
+      }
+
+      p {
+        margin: 0 0 14px;
+      }
+
+      ul {
+        margin: 0 0 18px;
+        padding-left: 24px;
+      }
+
+      li + li {
+        margin-top: 8px;
+      }
+
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+        font-size: 0.92em;
+      }
+
+      a {
+        color: var(--accent);
+      }
+
+      /* ---------- the card of cards ---------- */
+
+      .step {
+        position: relative;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px 20px 18px 62px;
+        margin: 0 0 16px;
+        box-shadow: var(--shadow);
+      }
+
+      .step .num {
+        position: absolute;
+        left: 18px;
+        top: 17px;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 14px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .step h3 {
+        margin: 2px 0 12px;
+        font-size: 17.5px;
+        letter-spacing: -0.01em;
+      }
+
+      pre {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+        font-size: 14px;
+        line-height: 1.5;
+        background: var(--surface-alt);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px 14px;
+        margin: 0 0 12px;
+        overflow-x: auto;
+      }
+
+      pre.type {
+        border-left: 3px solid var(--accent);
+      }
+
+      pre.see {
+        border-left: 3px solid var(--border);
+        margin-bottom: 10px;
+      }
+
+      .say {
+        margin: 0;
+        font-size: 15.5px;
+        color: var(--text-muted);
+      }
+
+      .say strong {
+        color: var(--text);
+      }
+
+      .small {
+        margin: 10px 0 0;
+        font-size: 15px;
+        color: var(--text-muted);
+      }
+
+      /* ---------- words table ---------- */
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 16.5px;
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 11px 10px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      th {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+      }
+
+      td:first-child {
+        white-space: nowrap;
+        font-weight: 600;
+      }
+
+      .done {
+        margin-top: 46px;
+        padding: 20px 22px;
+        background: var(--accent-soft);
+        border-radius: var(--radius);
+      }
+
+      .done p {
+        margin: 0 0 10px;
+      }
+
+      .done p:last-child {
+        margin-bottom: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="site-header">
+      <p>Built using <strong>DeepSeek Harness - Agentic AI.</strong></p>
+      <div class="hero-menu">
+        <a href="./index.html">Home</a>
+        <a href="./basic_usage.html">Basic Usage</a>
+        <a href="./intermediate_usage.html">Intermediate Usage</a>
+      </div>
+    </header>
+
+    <main>
+      <h1>Databases, the easy way</h1>
+      <p class="lede">A database is a box that remembers things for you. In five short steps you will make a box, put a list of friends in it, and read the list back.</p>
+
+      <h2>The whole idea first</h2>
+      <p>Picture a box of cards on a shelf.</p>
+      <ul>
+        <li>The <strong>box</strong> is a <strong>database</strong>.</li>
+        <li>The <strong>card</strong> inside it is a <strong>table</strong>.</li>
+        <li>One <strong>line</strong> on the card is a <strong>row</strong> — and each line is one friend.</li>
+        <li>Each <strong>space</strong> on that line is a <strong>column</strong> — one thing you know about the friend.</li>
+      </ul>
+      <p>That is all a database is. Big ones just have more boxes and more cards.</p>
+
+      <h2>Now do it</h2>
+
+      <div class="step">
+        <div class="num">1</div>
+        <h3>Open the program</h3>
+        <pre class="type">psql -U postgres</pre>
+        <p class="say"><strong>You should see</strong> a new line that starts with <strong>postgres=#</strong></p>
+        <p class="small">The <code>#</code> means the computer is ready for you. You are not done. You need to choose a database and connect to it. Or, create a new database and connect. We will do the latter. </p>
+      </div>
+
+      <div class="step">
+        <div class="num">2</div>
+        <h3>Make a new box</h3>
+        <p class="say">Call the box <strong>toybox</strong>. Type this and press Enter:</p>
+        <pre class="type">CREATE DATABASE toybox;</pre>
+        <p class="say"><strong>You should see</strong> <code>CREATE DATABASE</code>.</p>
+        <p class="small">The <code>;</code> at the end matters. If you leave it off, nothing happens at all.</p>
+      </div>
+
+      <div class="step">
+        <div class="num">3</div>
+        <h3>Go inside the box</h3>
+        <pre class="type">\c toybox</pre>
+        <p class="say"><strong>You should see</strong> <code>You are now connected to database "toybox"</code>. Your line now starts with <strong>toybox=#</strong>.</p>
+        <p class="small">A line starting with a backslash is a helper command, not a question. No <code>;</code> needed for those.</p>
+      </div>
+
+      <div class="step">
+        <div class="num">4</div>
+        <h3>Put a card in the box</h3>
+        <p class="say">The card is called <strong>friends</strong>. It has two spaces on it: <strong>name</strong> and <strong>age</strong>.</p>
+        <pre class="type">CREATE TABLE friends (name text, age integer);</pre>
+        <p class="say"><strong>You should see</strong> <code>CREATE TABLE</code>.</p>
+        <p class="small"><code>text</code> means words. <code>integer</code> means a whole number. You have to say which one each space holds, so the computer knows what to keep there.</p>
+      </div>
+
+      <div class="step">
+        <div class="num">5</div>
+        <h3>Write three friends on the card</h3>
+        <pre class="type">INSERT INTO friends (name, age) VALUES ('Ann', 5), ('Ben', 6), ('Cara', 7);</pre>
+        <p class="say"><strong>You should see</strong> <code>INSERT 0 3</code>.</p>
+        <p class="small">The <strong>3</strong> at the end means three friends went in. Names need quote marks around them. Numbers do not.</p>
+      </div>
+
+      <div class="step">
+        <div class="num">6</div>
+        <h3>Look at the card</h3>
+        <pre class="type">SELECT * FROM friends;</pre>
+        <p class="say"><strong>You should see this:</strong></p>
+        <pre class="see">
+ name | age
+------+-----
+ Ann  |   5
+ Ben  |   6
+ Cara |   7
+(3 rows)</pre
+        >
+        <p class="small">There are your three friends, and <code>(3 rows)</code> tells you how many came back. You just made a real database and read it.</p>
+      </div>
+
+      <h2>Now you try one</h2>
+      <p>Add a fourth friend — use your own name if you like.</p>
+      <pre class="type">INSERT INTO friends (name, age) VALUES ('Dana', 8);</pre>
+      <p>Then look at the card again, the same way as step 6:</p>
+      <pre class="type">SELECT * FROM friends;</pre>
+      <p class="say"><strong>You should see four friends now</strong> and <code>(4 rows)</code> at the bottom. Ann, Ben, Cara, and the one you just added.</p>
+
+      <h2>If you get stuck</h2>
+      <ul>
+        <li><strong>Nothing happened when you pressed Enter.</strong> You forgot the <code>;</code> at the end. Type <code>;</code> and press Enter again.</li>
+        <li>
+          <strong>It says <code>already exists</code>.</strong> You already did that step. Just go on to the next one.
+        </li>
+        <li>
+          <strong>It says <code>syntax error</code>.</strong> Something small is spelled differently. Copy the line again and try once more.
+        </li>
+      </ul>
+
+      <h2>Four words, and you are done</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Word</th>
+            <th>What it means</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>database</td>
+            <td>The box.</td>
+          </tr>
+          <tr>
+            <td>table</td>
+            <td>The card inside the box.</td>
+          </tr>
+          <tr>
+            <td>row</td>
+            <td>One friend — one line on the card.</td>
+          </tr>
+          <tr>
+            <td>column</td>
+            <td>One thing you know about a friend — name, or age.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="done">
+        <p><strong>You did it.</strong> You made a box called <strong>toybox</strong>, put a card called <strong>friends</strong> inside it, wrote three friends on the card, and read them back.</p>
+        <p>To come out, type <code>\q</code> and press Enter.</p>
+        <p>
+          When you want more, <a href="./intermediate_usage.html">intermediate_usage.html</a> is the next step: a bigger table with real problems in it. <a href="./index.html">index.html</a> is the full structured
+          lesson, with practice questions and a cheatsheet.
+        </p>
+      </div>
+    </main>
+  </body>
+</html>

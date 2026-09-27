@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>A real table with real problems — intermediate_usage</title>
+    <link rel="stylesheet" href="./rootvars.css" />
+    <link rel="stylesheet" href="./menu.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      main {
+        max-width: 780px;
+        margin: 0 auto;
+        padding: 44px clamp(18px, 4vw, 40px) 90px;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(28px, 4.6vw, 36px);
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+      }
+
+      .lede {
+        margin: 0 0 14px;
+        font-size: 18px;
+        color: var(--text-muted);
+      }
+
+      h2 {
+        margin: 52px 0 16px;
+        font-size: 22px;
+        letter-spacing: -0.015em;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      h3 {
+        margin: 30px 0 10px;
+        font-size: 17.5px;
+      }
+
+      p {
+        margin: 0 0 14px;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 16px;
+        padding-left: 24px;
+      }
+
+      li + li {
+        margin-top: 7px;
+      }
+
+      a {
+        color: var(--accent);
+      }
+
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+        font-size: 0.92em;
+      }
+
+      pre {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+        font-size: 13.5px;
+        line-height: 1.5;
+        background: var(--surface-alt);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px 14px;
+        margin: 0 0 12px;
+        overflow-x: auto;
+      }
+
+      pre.type {
+        border-left: 3px solid var(--accent);
+      }
+
+      pre.see {
+        border-left: 3px solid var(--border);
+      }
+
+      .say {
+        margin: 0 0 12px;
+        font-size: 15.5px;
+        color: var(--text-muted);
+      }
+
+      .say strong,
+      .small strong {
+        color: var(--text);
+      }
+
+      .small {
+        margin: 0 0 14px;
+        font-size: 15px;
+        color: var(--text-muted);
+      }
+
+      .callout {
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--accent);
+        background: var(--surface);
+        border-radius: var(--radius);
+        padding: 14px 16px;
+        margin: 18px 0;
+        font-size: 16px;
+      }
+
+      .callout.warn {
+        border-left-color: #d97706;
+      }
+
+      .callout p:last-child {
+        margin-bottom: 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 16px;
+        margin: 0 0 18px;
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 9px 10px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+      }
+
+      th {
+        font-size: 11.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+      }
+
+      td:first-child {
+        white-space: nowrap;
+      }
+
+      td:first-child code {
+        font-weight: 600;
+      }
+
+      .ex {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        margin: 0 0 16px;
+        box-shadow: var(--shadow);
+      }
+
+      .ex h3 {
+        margin: 0 0 8px;
+        font-size: 17px;
+      }
+
+      .ex .shape {
+        margin: 0 0 12px;
+        font-size: 15px;
+        color: var(--text-muted);
+      }
+
+      details {
+        border-top: 1px dashed var(--border);
+        padding-top: 10px;
+      }
+
+      summary {
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+
+      summary:hover {
+        color: var(--accent);
+      }
+
+      details[open] summary {
+        margin-bottom: 10px;
+      }
+
+      .done {
+        margin-top: 52px;
+        padding: 20px 22px;
+        background: var(--accent-soft);
+        border-radius: var(--radius);
+      }
+
+      .done p:last-child {
+        margin-bottom: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="site-header">
+      <p>Built using <strong>DeepSeek Harness - Agentic AI.</strong></p>
+      <div class="hero-menu">
+        <a href="./index.html">Home</a>
+        <a href="./basic_usage.html">Basic Usage</a>
+        <a href="./intermediate_usage.html">Intermediate Usage</a>
+      </div>
+    </header>
+
+    <main>
+      <h1>A real table, with real problems in it</h1>
+      <p class="lede">Sixteen games, eight columns, five data types — and three things wrong with the data, on purpose. Over the next hour you will build it, interrogate it, and then safely fix it.</p>
+      <p class="small">
+        This assumes you can already open <code>psql</code>, create a database, and read a <code>SELECT</code>. If not, <a href="./basic_usage.html">basic_usage.html</a> gets you there in six steps. Everything below was
+        run against PostgreSQL 18.6 on this machine, so the output under each query is the output you should get.
+      </p>
+
+      <h2>1. The shape of the thing</h2>
+
+      <p>A catalogue of games you own. Eight columns, and the type of each one is a decision you are making about your own data:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Column</th>
+            <th>Type</th>
+            <th>Why</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>id</code></td>
+            <td><code>integer</code>, identity</td>
+            <td>The database hands out 1, 2, 3… on its own. You never type it, and it is the primary key: unique, never null, and indexed.</td>
+          </tr>
+          <tr>
+            <td><code>title</code></td>
+            <td><code>text</code></td>
+            <td>Words. <code>NOT NULL</code> — a game with no title is not a game.</td>
+          </tr>
+          <tr>
+            <td><code>genre</code></td>
+            <td><code>text</code></td>
+            <td>Words again. You will group by this later.</td>
+          </tr>
+          <tr>
+            <td><code>price</code></td>
+            <td><code>numeric(6,2)</code></td>
+            <td>Money. <code>numeric</code> stores exact decimals — up to 6 digits, 2 after the point. Never store money in a float: <code>0.1 + 0.2</code> is not <code>0.3</code> in binary.</td>
+          </tr>
+          <tr>
+            <td><code>released</code></td>
+            <td><code>date</code></td>
+            <td>A calendar day, and it sorts and compares like one.</td>
+          </tr>
+          <tr>
+            <td><code>rating</code></td>
+            <td><code>numeric(3,1)</code></td>
+            <td>The <em>only</em> column with no <code>NOT NULL</code>: a new release may not be rated yet, and that is real information, not zero.</td>
+          </tr>
+          <tr>
+            <td><code>hours_played</code></td>
+            <td><code>integer</code>, default 0</td>
+            <td>Counts up. If you leave it out of an insert, Postgres writes 0 for you.</td>
+          </tr>
+          <tr>
+            <td><code>finished</code></td>
+            <td><code>boolean</code>, default false</td>
+            <td>True or false, nothing in between. Defaults to false for the same reason.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="small">The games are invented. Nothing here describes a real product, price or release date — which also means the data can be exactly as awkward as I want it to be.</p>
+
+      <h2>2. Build it</h2>
+
+      <p>Its own database, so nothing here can disturb your earlier work:</p>
+      <pre class="type">psql -U postgres</pre>
+      <pre class="type">
+CREATE DATABASE gamevault;
+\c gamevault</pre
+      >
+      <pre class="see">
+CREATE DATABASE
+You are now connected to database "gamevault" as user "postgres".</pre
+      >
+
+      <p class="small">
+        If instead you get <code>ERROR: database "gamevault" already exists</code>, it has been created before. That is not a failure — skip the <code>CREATE DATABASE</code> line and go straight to
+        <code>\c gamevault</code>. Re-running a script without it exploding is worth designing for, and the companion script is built that way: it drops the table and rebuilds it from scratch every time.
+      </p>
+
+      <p>Now the table. Read it once before you type it — the constraints are the interesting part:</p>
+      <pre class="type">
+CREATE TABLE games (
+    id           integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    title        text    NOT NULL,
+    genre        text    NOT NULL,
+    price        numeric(6,2) NOT NULL,
+    released     date    NOT NULL,
+    rating       numeric(3,1),
+    hours_played integer NOT NULL DEFAULT 0,
+    finished     boolean NOT NULL DEFAULT false
+);</pre
+      >
+      <pre class="see">CREATE TABLE</pre>
+
+      <p class="say">Ask Postgres what it actually built — this is your first reflex whenever a query misbehaves:</p>
+      <pre class="type">\d games</pre>
+      <pre class="see">
+                               Table "public.games"
+    Column    |     Type     | Collation | Nullable |           Default
+--------------+--------------+-----------+----------+------------------------------
+ id           | integer      |           | not null | generated always as identity
+ title        | text         |           | not null |
+ genre        | text         |           | not null |
+ price        | numeric(6,2) |           | not null |
+ released     | date         |           | not null |
+ rating       | numeric(3,1) |           |          |
+ hours_played | integer      |           | not null | 0
+ finished     | boolean      |           | not null | false
+Indexes:
+    "games_pkey" PRIMARY KEY, btree (id)</pre
+      >
+
+      <p class="say">Note the empty <code>Nullable</code> cell on <code>rating</code> — the only column allowed to be missing — and that the primary key arrived with an index attached, for free.</p>
+
+      <p>Now the data. Sixteen rows in one statement, and I have planted three problems in them:</p>
+      <pre class="type">
+INSERT INTO games (title, genre, price, released, rating, hours_played, finished) VALUES
+    ('Neon Drift',    'Roguelike',  24.99, '2021-03-18', 4.5,  62,  true),
+    ('Hollow Keep',   'RPG',        59.99, '2023-11-02', 4.8, 118,  false),
+    ('Paper Skies',   'Platformer', 14.99, '2019-06-21', 4.0,   9,  true),
+    ('Static Bloom',  'Puzzle',      9.99, '2022-01-14', NULL,  3,  false),
+    ('Iron Verdict',  'Shooter',    39.99, '2024-09-05', 3.6,  47,  false),
+    ('Salt &amp; Cinder', 'RPG',        49.99, '2020-08-30', 4.2,  96,  true),
+    ('Tiny Kingdoms', 'Sim',        19.99, '2018-04-12', 3.9, 210,  true),
+    ('Redline Zero',  'Shooter',    69.99, '2025-02-27', 4.1,  12,  false),
+    ('Echo Vault',    'Puzzle',     12.99, '2023-05-09', 4.4,  31,  true),
+    ('Glasshouse',    'Sim',        27.50, '2021-11-19', NULL,  0,  false),
+    ('Nightbus',      'Platformer',  7.99, '2017-10-03', 3.2,   5,  true),
+    ('Paper Skies',   'Platformer', 14.99, '2019-06-21', 4.0,   9,  true),
+    ('Dust &amp; Diesel', 'Sim',        34.99, '2022-07-15', 3.8,  24,  false),
+    ('Velvet Static', 'Roguelike',  17.99, '2024-04-08', 4.6,  55,  false),
+    ('Cold Open',     'RPG',        29.99, '2019-01-25', 4.3,  71,  true),
+    ('Marrow',        'Shooter',    22.50, '2023-08-11', NULL,  8,  false);</pre
+      >
+      <pre class="see">INSERT 0 16</pre>
+
+      <p class="say"><strong>16</strong> is the number that matters. Watch it every time you insert, update or delete: it is the receipt for what just happened.</p>
+
+      <div class="callout">
+        <p>
+          <strong>The three planted problems.</strong> Three games have no rating (<code>NULL</code>), one game has never been played, and one title — <code>Paper Skies</code> — is in there <em>twice</em> because the
+          import ran over the same file. None of that is a mistake in the lesson; it is what every real table looks like eventually, and the rest of this page is about noticing it.
+        </p>
+      </div>
+
+      <h2>3. Look at what you have</h2>
+
+      <pre class="type">
+SELECT id, title, genre, price, rating, hours_played, finished
+FROM games ORDER BY id;</pre
+      >
+      <pre class="see">
+ id |     title     |   genre    | price | rating | hours_played | finished
+----+---------------+------------+-------+--------+--------------+----------
+  1 | Neon Drift    | Roguelike  | 24.99 |    4.5 |           62 | t
+  2 | Hollow Keep   | RPG        | 59.99 |    4.8 |          118 | f
+  3 | Paper Skies   | Platformer | 14.99 |    4.0 |            9 | t
+  4 | Static Bloom  | Puzzle     |  9.99 |        |            3 | f
+  5 | Iron Verdict  | Shooter    | 39.99 |    3.6 |           47 | f
+  6 | Salt &amp; Cinder | RPG        | 49.99 |    4.2 |           96 | t
+  7 | Tiny Kingdoms | Sim        | 19.99 |    3.9 |          210 | t
+  8 | Redline Zero  | Shooter    | 69.99 |    4.1 |           12 | f
+  9 | Echo Vault    | Puzzle     | 12.99 |    4.4 |           31 | t
+ 10 | Glasshouse    | Sim        | 27.50 |        |            0 | f
+ 11 | Nightbus      | Platformer |  7.99 |    3.2 |            5 | t
+ 12 | Paper Skies   | Platformer | 14.99 |    4.0 |            9 | t
+ 13 | Dust &amp; Diesel | Sim        | 34.99 |    3.8 |           24 | f
+ 14 | Velvet Static | Roguelike  | 17.99 |    4.6 |           55 | f
+ 15 | Cold Open     | RPG        | 29.99 |    4.3 |           71 | t
+ 16 | Marrow        | Shooter    | 22.50 |        |            8 | f
+(16 rows)</pre
+      >
+
+      <p class="say">
+        The <code>id</code> column filled itself in — that is the identity doing its job. The blanks in <code>rating</code> are the <code>NULL</code>s, and <code>t</code>/<code>f</code> is how <code>psql</code> prints a
+        boolean. Rows 3 and 12 are the duplicate.
+      </p>
+
+      <p class="say">
+        Notice also what is <em>missing</em>: no <code>ORDER BY</code> means no promised order. I asked for <code>ORDER BY id</code>, so this listing is stable. Without it, Postgres may hand the rows back in any order it
+        likes.
+      </p>
+
+      <h2>4. Ask it questions</h2>
+
+      <h3>What have I never played?</h3>
+      <pre class="type">SELECT title, price FROM games WHERE hours_played = 0;</pre>
+      <pre class="see">
+   title    | price
+------------+-------
+ Glasshouse | 27.50
+(1 row)</pre
+      >
+
+      <h3>What did I pay full whack for?</h3>
+      <pre class="type">SELECT title, genre, price FROM games WHERE price &gt;= 50 ORDER BY price DESC;</pre>
+      <pre class="see">
+    title     |  genre  | price
+--------------+---------+-------
+ Redline Zero | Shooter | 69.99
+ Hollow Keep  | RPG     | 59.99
+(2 rows)</pre
+      >
+
+      <h3>What is still unfinished?</h3>
+      <pre class="type">SELECT title, released FROM games WHERE NOT finished ORDER BY released DESC;</pre>
+      <pre class="see">
+     title     |  released
+---------------+------------
+ Redline Zero  | 2025-02-27
+ Iron Verdict  | 2024-09-05
+ Velvet Static | 2024-04-08
+ Hollow Keep   | 2023-11-02
+ Marrow        | 2023-08-11
+ Dust &amp; Diesel | 2022-07-15
+ Static Bloom  | 2022-01-14
+ Glasshouse    | 2021-11-19
+(8 rows)</pre
+      >
+
+      <p class="say"><code>WHERE NOT finished</code> works because <code>finished</code> is a boolean, so it is already a condition on its own. <code>WHERE finished = false</code> means exactly the same thing.</p>
+
+      <h3>What is recent?</h3>
+      <pre class="type">SELECT title, released FROM games WHERE released &gt;= '2023-01-01' ORDER BY released DESC;</pre>
+      <pre class="see">
+     title     |  released
+---------------+------------
+ Redline Zero  | 2025-02-27
+ Iron Verdict  | 2024-09-05
+ Velvet Static | 2024-04-08
+ Hollow Keep   | 2023-11-02
+ Marrow        | 2023-08-11
+ Echo Vault    | 2023-05-09
+(6 rows)</pre
+      >
+
+      <p class="say">
+        A date in single quotes is compared as a date, not as text. That is why <code>'2023-01-01'</code> works the way you expect — and why you should write dates as <code>YYYY-MM-DD</code> and never as
+        <code>01/02/2023</code>, which means two different days depending on which side of the Atlantic you are standing.
+      </p>
+
+      <h2>5. Summarise it</h2>
+
+      <p>Aggregates collapse many rows into one. Three of them in a single query:</p>
+      <pre class="type">
+SELECT count(*) AS rows, count(rating) AS rated, count(DISTINCT genre) AS genres
+FROM games;</pre
+      >
+      <pre class="see">
+ rows | rated | genres
+------+-------+--------
+   16 |    13 |      6
+(1 row)</pre
+      >
+
+      <div class="callout warn">
+        <p>
+          <strong>16 rows, but only 13 ratings.</strong> That gap is the whole lesson. <code>count(*)</code> counts rows; <code>count(rating)</code> counts rows where the rating <em>exists</em>. They are different
+          questions, and mixing them up is the most common way to get a plausible, wrong number out of a database.
+        </p>
+      </div>
+
+      <pre class="type">
+SELECT round(avg(rating), 2) AS avg_rating,
+       round(sum(price), 2) AS catalogue_value,
+       max(released) AS newest
+FROM games;</pre
+      >
+      <pre class="see">
+ avg_rating | catalogue_value |   newest
+------------+-----------------+------------
+       4.11 |          458.86 | 2025-02-27
+(1 row)</pre
+      >
+
+      <p class="say">That 4.11 is the average of <strong>13</strong> ratings, not 16. The three unrated games were skipped, not counted as zero.</p>
+
+      <p>Now the useful one — one summary row per genre, which is where a table this size starts earning its keep:</p>
+      <pre class="type">
+SELECT genre,
+       count(*) AS games,
+       round(avg(rating), 2) AS avg_rating,
+       sum(hours_played) AS hours
+FROM games
+GROUP BY genre
+ORDER BY hours DESC;</pre
+      >
+      <pre class="see">
+   genre    | games | avg_rating | hours
+------------+-------+------------+-------
+ RPG        |     3 |       4.43 |   285
+ Sim        |     3 |       3.85 |   234
+ Roguelike  |     2 |       4.55 |   117
+ Shooter    |     3 |       3.85 |    67
+ Puzzle     |     2 |       4.40 |    34
+ Platformer |     3 |       3.73 |    23
+(6 rows)</pre
+      >
+
+      <p class="say">
+        Sixteen rows in, six rows out. <code>GROUP BY genre</code> means "make one output row per genre", and every aggregate in the <code>SELECT</code> list is then computed inside each group rather than over the whole
+        table.
+      </p>
+
+      <p class="say">
+        Look hard at <code>Puzzle</code>: an average of 4.40 from just two games, one of which has no rating at all. Averages over tiny groups are how you talk yourself into bad decisions. Add
+        <code>count(rating)</code> to that query whenever a group might be small:
+      </p>
+      <pre class="type">
+SELECT genre, count(*) AS games FROM games
+GROUP BY genre HAVING count(*) &gt; 2 ORDER BY games DESC, genre;</pre
+      >
+      <pre class="see">
+   genre    | games
+------------+-------
+ Platformer |     3
+ RPG        |     3
+ Shooter    |     3
+ Sim        |     3
+(4 rows)</pre
+      >
+
+      <p class="say">
+        <code>HAVING</code> filters <em>groups</em>, the way <code>WHERE</code> filters rows. You cannot write <code>WHERE count(*) &gt; 2</code>: <code>WHERE</code> runs before the groups exist. That is the one rule
+        worth memorising from this section.
+      </p>
+
+      <h2>6. Missing is not zero</h2>
+
+      <p>Three games have no rating. Ask for them explicitly — note that <code>rating = NULL</code> would return nothing at all, because equality against "unknown" is never true:</p>
+      <pre class="type">
+SELECT title, COALESCE(rating::text, 'unrated') AS rating
+FROM games WHERE rating IS NULL;</pre
+      >
+      <pre class="see">
+    title     | rating
+--------------+---------
+ Static Bloom | unrated
+ Glasshouse   | unrated
+ Marrow       | unrated
+(3 rows)</pre
+      >
+
+      <p class="say">
+        <code>COALESCE</code> returns the first argument that is not null — here, the rating if there is one, otherwise the word <code>unrated</code>. The <code>::text</code> is a cast: a column can only hold one type,
+        and <code>4.5</code> and <code>'unrated'</code> are not the same type, so the number is converted to text to let them share a column.
+      </p>
+
+      <p>And here is what that same decision does to an average, depending on how you handle the gap:</p>
+      <pre class="type">
+SELECT round(avg(rating), 2) AS avg_ignoring_nulls,
+       round(avg(COALESCE(rating, 0)), 2) AS avg_null_as_zero
+FROM games;</pre
+      >
+      <pre class="see">
+ avg_ignoring_nulls | avg_null_as_zero
+--------------------+------------------
+               4.11 |             3.34
+(1 row)</pre
+      >
+
+      <p class="say">
+        4.11 is the honest average of the ratings that exist. 3.34 is what you get if you decide that "not rated yet" means "rated zero" — a number that is not just different, but meaningless. Whenever you reach for
+        <code>COALESCE</code> in an aggregate, ask which of these two questions you are actually asking.
+      </p>
+
+      <h2>7. Find the duplicate</h2>
+
+      <pre class="type">
+SELECT title, genre, count(*) AS copies
+FROM games
+GROUP BY title, genre
+HAVING count(*) &gt; 1;</pre
+      >
+      <pre class="see">
+    title    |   genre    | copies
+-------------+------------+--------
+ Paper Skies | Platformer |      2
+(1 row)</pre
+      >
+
+      <p class="say">
+        Group by the things that make two rows "the same game", then keep the groups with more than one row. The two rows are <code>id</code> 3 and <code>id</code> 12 — identical in every column except the
+        <code>id</code>, which is exactly why the primary key did not stop this. A primary key guarantees every <em>row</em> is unique; it cannot know that two rows describe the same <em>game</em>. Only you know that,
+        which is why real schemas grow unique constraints on things like <code>title</code> once someone gets burned.
+      </p>
+
+      <h2>8. Your turn</h2>
+
+      <p>Three questions about the catalogue. Work them out before opening the answers — the expected numbers tell you whether you were right, which is the whole point of stating them.</p>
+
+      <div class="ex">
+        <h3>Which genres rate above 4.0?</h3>
+        <p class="shape"><strong>Expected:</strong> 3 rows, columns <code>genre, avg_rating</code>, best first.</p>
+        <details>
+          <summary>Answer</summary>
+          <pre class="type">
+SELECT genre, round(avg(rating), 2) AS avg_rating
+FROM games
+GROUP BY genre
+HAVING avg(rating) &gt; 4.0
+ORDER BY avg_rating DESC;</pre
+          >
+          <pre class="see">
+   genre   | avg_rating
+-----------+------------
+ Roguelike |       4.55
+ RPG       |       4.43
+ Puzzle    |       4.40
+(3 rows)</pre
+          >
+          <p class="small">
+            The trap is putting the condition in a <code>WHERE</code> clause — it has to be <code>HAVING</code>, because it is a statement about a group. If your Puzzle row looks like a win, remember it is one rating out
+            of two games.
+          </p>
+        </details>
+      </div>
+
+      <div class="ex">
+        <h3>What have I paid for and never played?</h3>
+        <p class="shape"><strong>Expected:</strong> 1 row, and a total amount of <strong>27.50</strong>.</p>
+        <details>
+          <summary>Answer</summary>
+          <pre class="type">
+SELECT count(*) AS never_played, round(sum(price), 2) AS wasted
+FROM games WHERE hours_played = 0;</pre
+          >
+          <pre class="see">
+ never_played | wasted
+--------------+--------
+            1 |  27.50
+(1 row)</pre
+          >
+          <p class="small">
+            The filter and the aggregate go in the same query: <code>WHERE</code> narrows the rows first, then <code>sum()</code> adds up what is left. If your total is 458.86, you summed the whole catalogue — the filter
+            is missing.
+          </p>
+        </details>
+      </div>
+
+      <div class="ex">
+        <h3>Which genres have more than 100 hours in them?</h3>
+        <p class="shape"><strong>Expected:</strong> 3 rows, columns <code>genre, hours</code>, largest first.</p>
+        <details>
+          <summary>Answer</summary>
+          <pre class="type">
+SELECT genre, sum(hours_played) AS hours
+FROM games
+GROUP BY genre
+HAVING sum(hours_played) &gt; 100
+ORDER BY hours DESC;</pre
+          >
+          <pre class="see">
+   genre   | hours
+-----------+-------
+ RPG       |   285
+ Sim       |   234
+ Roguelike |   117
+(3 rows)</pre
+          >
+          <p class="small">Same shape as exercise 1 with a different aggregate. Once you can see that, you have stopped memorising queries and started recognising them.</p>
+        </details>
+      </div>
+
+      <h2>9. Changing data without regret</h2>
+
+      <p>
+        Everything so far only read. Now you write — and the first thing to learn is how to take it back. Here is the classic beginner disaster, run on purpose: an <code>UPDATE</code> with a typo'd or forgotten
+        <code>WHERE</code>.
+      </p>
+      <pre class="type">
+BEGIN;
+UPDATE games SET price = price + 10;
+SELECT count(*) AS over_60 FROM games WHERE price &gt; 60;
+ROLLBACK;</pre
+      >
+      <pre class="see">
+BEGIN
+UPDATE 16
+ over_60
+---------
+       2
+(1 row)
+
+ROLLBACK</pre
+      >
+
+      <p class="say">
+        I meant to bump one game's price. <code>UPDATE 16</code> says I hit every row in the table. <code>BEGIN</code> put the whole thing inside a transaction, and <code>ROLLBACK</code> undid it as if it never happened
+        — verified, because the count is back to 1:
+      </p>
+      <pre class="type">SELECT count(*) AS over_60_after_rollback FROM games WHERE price &gt; 60;</pre>
+      <pre class="see">
+ over_60_after_rollback
+------------------------
+                      1
+(1 row)</pre
+      >
+
+      <div class="callout">
+        <p>
+          <strong>The habit that will save you a job one day.</strong> Wrap any <code>UPDATE</code> or <code>DELETE</code> in <code>BEGIN;</code> … check the result … <code>COMMIT;</code> (keep it) or
+          <code>ROLLBACK;</code> (throw it away). It costs you one extra line and buys back any mistake short of a dropped table. And read the command tag every time: <code>UPDATE 16</code> when you expected
+          <code>UPDATE 1</code> is the database telling you that you are about to have a bad afternoon.
+        </p>
+      </div>
+
+      <p>Now the same operation done properly. One row, named by its primary key, with <code>RETURNING</code> so you can see exactly what changed:</p>
+      <pre class="type">
+UPDATE games
+SET finished = true, hours_played = hours_played + 6
+WHERE id = 8
+RETURNING id, title, hours_played, finished;</pre
+      >
+      <pre class="see">
+ id |    title     | hours_played | finished
+----+--------------+--------------+----------
+  8 | Redline Zero |           18 | t
+(1 row)
+
+UPDATE 1</pre
+      >
+
+      <p class="say">
+        <code>UPDATE 1</code>. That is the receipt you want. <code>RETURNING</code> shows the row after the change, so you do not have to run a <code>SELECT</code> to find out whether it worked — and
+        <code>hours_played = hours_played + 6</code> reads the old value and writes the new one in a single step, with no need to know what it was.
+      </p>
+
+      <h2>10. Delete the duplicate, carefully</h2>
+
+      <p>You found it, so remove it — inside a transaction, checking the count before you commit:</p>
+      <pre class="type">
+BEGIN;
+DELETE FROM games WHERE id = 12;
+SELECT count(*) AS rows_inside_transaction FROM games;
+COMMIT;</pre
+      >
+      <pre class="see">
+BEGIN
+DELETE 1
+ rows_inside_transaction
+-------------------------
+                      15
+(1 row)
+
+COMMIT</pre
+      >
+
+      <p class="say">
+        <code>DELETE 1</code> — exactly one row, which is what "the second copy of Paper Skies" should be. I kept <code>id</code> 3 and removed <code>id</code> 12 because the lower id is the original import; in a real
+        system the copy you keep is the one other tables point at, and you would check that before deleting, not after. <code>COMMIT</code> makes it permanent:
+      </p>
+      <pre class="type">SELECT count(*) AS final_rows FROM games;</pre>
+      <pre class="see">
+ final_rows
+------------
+         15
+(1 row)</pre
+      >
+
+      <h2>11. Where you are now</h2>
+
+      <ul>
+        <li>You designed a table with eight columns, five types, a primary key, defaults and one deliberately nullable field.</li>
+        <li>You can filter rows, sort them, and summarise them per group — and you know why <code>HAVING</code> is not <code>WHERE</code>.</li>
+        <li>You know that <code>count(*)</code> and <code>count(column)</code> answer different questions, and that a missing value is not a zero.</li>
+        <li>You can find duplicate rows and delete one of them without losing sleep, because you used a transaction and read the row count.</li>
+      </ul>
+
+      <p>
+        The next rung is a second table and a <code>JOIN</code>: genres belong in their own table with a name and an id, and <code>games.genre</code> becomes <code>games.genre_id</code> pointing at it. That is the moment
+        a database stops being a tidy spreadsheet and starts being worth the trouble — and it is exactly the thing a spreadsheet cannot do.
+      </p>
+
+      <div class="done">
+        <p>
+          <strong>Two other pages in this folder:</strong> <a href="./index.html">index.html</a> is the full structured lesson — worked example, hint ladders, a misconceptions section and a psql cheatsheet.
+          <a href="./basic_usage.html">basic_usage.html</a> is the six-step version for when you have forgotten how to get started.
+        </p>
+        <p>To start this lesson over from scratch, run <code>psql -U postgres -f intermediate_usage.sql</code> — it resets the catalogue to its sixteen original rows.</p>
+      </div>
+    </main>
+  </body>
+</html>

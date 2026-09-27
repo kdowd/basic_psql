@@ -1,0 +1,43 @@
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font:
+    17px/1.65 system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.hero-menu {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  list-style: none;
+  align-items: center;
+  margin: 0;
+  padding: 1rem 0;
+}
+.site-header {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  padding: 0 clamp(18px, 4vw, 40px);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.site-header p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.site-header strong {
+  color: var(--accent);
+  font-weight: 600;
+}
