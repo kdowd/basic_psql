@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Create your first PostgreSQL database — basic_psql</title>
+    <title>Create your first PostgreSQL database — blah_db</title>
     <link rel="stylesheet" href="./rootvars.css" />
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./lesson.css" />
@@ -130,7 +130,7 @@
               <h3>By the end you will be able to</h3>
               <ol class="objectives">
                 <li><strong>Connect to the running server</strong> with <code>psql</code>, and prove which database and which user you are talking to.</li>
-                <li><strong>Create a database</strong> called <code>basic_psql</code> and a table <code>users</code> whose four columns have types you chose yourself.</li>
+                <li><strong>Create a database</strong> called <code>blah_db</code> and a table <code>users</code> whose four columns have types you chose yourself.</li>
                 <li><strong>Insert eight rows in one statement</strong>, including a name that contains an apostrophe.</li>
                 <li>
                   <strong>Read the rows back with a <code>SELECT</code></strong
@@ -143,7 +143,7 @@
 
               <pre class="tree">
 server   localhost:5432   (PostgreSQL 18.6, already running)
-└── database  basic_psql          &lt;- you create this
+└── database  blah_db          &lt;- you create this
     └── table  public.users       &lt;- you create this
         ├── firstname   text
         ├── lastname    text
@@ -236,7 +236,7 @@ server   localhost:5432   (PostgreSQL 18.6, already running)
                     <td>List every database on the server.</td>
                   </tr>
                   <tr>
-                    <td><code>\c basic_psql</code></td>
+                    <td><code>\c blah_db</code></td>
                     <td>Connect to a different database without leaving <code>psql</code>.</td>
                   </tr>
                   <tr>
@@ -262,12 +262,12 @@ server   localhost:5432   (PostgreSQL 18.6, already running)
                 <p>
                   <strong>Faster path, once you have read <em>Build it</em>.</strong> The whole lesson is also saved as one script in this folder:
                 </p>
-                <pre class="sql">psql -U postgres -f basic_psql.sql</pre>
+                <pre class="sql">psql -U postgres -f blah_db.sql</pre>
                 <p>
                   It is the same commands in the same order. Read the next tab first — the script is for re-running, not for learning from. Re-running is safe: it drops and rebuilds the <code>users</code> table, so you
                   always finish at exactly eight rows. Expect one red line on a second run:
                 </p>
-                <pre class="out is-error">ERROR:  database "basic_psql" already exists</pre>
+                <pre class="out is-error">ERROR:  database "blah_db" already exists</pre>
                 <p>
                   That is the <code>CREATE DATABASE</code> line noticing the work is already done. <code>psql</code> keeps going and everything after it succeeds. The only path that is <em>not</em> safe is running the
                   <code>INSERT</code> repeatedly without the drop — that is how you get sixteen rows and a lesson whose every expected count is wrong.
@@ -285,7 +285,7 @@ server   localhost:5432   (PostgreSQL 18.6, already running)
               <ol class="steps">
                 <li>
                   <h4>Create the database</h4>
-                  <pre class="sql">CREATE DATABASE basic_psql;</pre>
+                  <pre class="sql">CREATE DATABASE blah_db;</pre>
                   <pre class="out">CREATE DATABASE</pre>
                   <p>
                     <strong>Why:</strong> a database is the container everything else lives inside. You are currently sitting in <code>postgres</code>, the maintenance database the server keeps for itself, and putting
@@ -296,11 +296,11 @@ server   localhost:5432   (PostgreSQL 18.6, already running)
 
                 <li>
                   <h4>Move into it</h4>
-                  <pre class="sql">\c basic_psql</pre>
-                  <pre class="out">You are now connected to database "basic_psql" as user "postgres".</pre>
+                  <pre class="sql">\c blah_db</pre>
+                  <pre class="out">You are now connected to database "blah_db" as user "postgres".</pre>
                   <p>
-                    <strong>Why:</strong> creating a database does not enter it. <code>\c</code> reconnects the current session, and from here on every statement lands in <code>basic_psql</code>. Confirm it two ways: the
-                    prompt is now <code>basic_psql=#</code>, and <code>\conninfo</code> agrees.
+                    <strong>Why:</strong> creating a database does not enter it. <code>\c</code> reconnects the current session, and from here on every statement lands in <code>blah_db</code>. Confirm it two ways: the
+                    prompt is now <code>blah_db=#</code>, and <code>\conninfo</code> agrees.
                   </p>
                 </li>
 
@@ -770,7 +770,7 @@ LINE 1: SELECT count(*) AS quoted_fails FROM "Users";</pre
 
               <div class="card">
                 <h3>A small library</h3>
-                <p>Create a table <code>books</code> in the same <code>basic_psql</code> database, with the same four-column shape as <code>users</code>:</p>
+                <p>Create a table <code>books</code> in the same <code>blah_db</code> database, with the same four-column shape as <code>users</code>:</p>
                 <ul>
                   <li><code>title</code> — text</li>
                   <li><code>author</code> — text</li>
@@ -827,19 +827,12 @@ LINE 1: SELECT count(*) AS quoted_fails FROM "Users";</pre
             <!-- ==================== 8. CHEATSHEET ==================== -->
             <section id="panel-cheatsheet" role="tabpanel" aria-labelledby="tab-cheatsheet" tabindex="0" hidden>
               <h2>psql cheatsheet</h2>
-              <div class="meta">Reference · everything this lesson used, plus what you will want next</div>
+              <div class="meta">Common commands to memorize::</div>
 
               <p class="lesson-lede">
                 Commands starting with a backslash are <em>meta-commands</em>: <code>psql</code> itself handles them, so they take no semicolon and are not case-sensitive. Everything else is SQL, and SQL is not executed
                 until you end it with <code>;</code>.
               </p>
-
-              <div class="callout warn">
-                <p>
-                  <strong>About the interactive ones.</strong> <code>\e</code>, <code>\watch</code>, <code>\s</code> and <code>\?</code> need a real terminal session — they behave differently, or not at all, when
-                  commands are piped in from a file, which is how every output on this page was produced. Everything else here was run against your server.
-                </p>
-              </div>
 
               <h3>Getting in and out</h3>
               <table class="meta-table sheet">
@@ -855,16 +848,13 @@ LINE 1: SELECT count(*) AS quoted_fails FROM "Users";</pre
                     <td>Connect to the local server as the <code>postgres</code> role. Without <code>-U</code> you get <code>role "OEM" does not exist</code>.</td>
                   </tr>
                   <tr>
-                    <td><code>psql -U postgres -d basic_psql</code></td>
-                    <td>Connect and go straight into one database instead of <code>postgres</code>.</td>
+                    <td><code>psql -U postgres -d blah_db</code></td>
+                    <td>Connect and go straight into one database instead of <code>postgres</code> database.</td>
                   </tr>
+
                   <tr>
-                    <td><code>psql -h host -p 5432 -U user -d db</code></td>
-                    <td>The full form, for a server that is not on your machine.</td>
-                  </tr>
-                  <tr>
-                    <td><code>\c basic_psql</code></td>
-                    <td>Switch database without leaving the session.</td>
+                    <td><code>\c blah_db</code></td>
+                    <td>Switch database without leaving the <code>psql</code> session.</td>
                   </tr>
                   <tr>
                     <td><code>\conninfo</code></td>
@@ -873,10 +863,6 @@ LINE 1: SELECT count(*) AS quoted_fails FROM "Users";</pre
                   <tr>
                     <td><code>\q</code></td>
                     <td>Quit. Ctrl+D does the same.</td>
-                  </tr>
-                  <tr>
-                    <td>Ctrl+C</td>
-                    <td>Cancel the query you are waiting on, without quitting.</td>
                   </tr>
                 </tbody>
               </table>
@@ -949,17 +935,10 @@ LINE 1: SELECT count(*) AS quoted_fails FROM "Users";</pre
                     </td>
                   </tr>
                   <tr>
-                    <td><code>\i basic_psql.sql</code></td>
-                    <td>Run a file from inside <code>psql</code> — the in-session twin of <code>psql -f</code>.</td>
+                    <td><code>\i blah_db.sql</code></td>
+                    <td>Run an sql from inside <code>psql</code>.</td>
                   </tr>
-                  <tr>
-                    <td><code>\e</code></td>
-                    <td>Open the current query buffer in your editor.</td>
-                  </tr>
-                  <tr>
-                    <td><code>\p</code> / <code>\r</code> / <code>\g</code></td>
-                    <td>Print the query buffer / clear it / run it.</td>
-                  </tr>
+
                   <tr>
                     <td><code>\h SELECT</code></td>
                     <td>The syntax reference for one statement. <code>\h</code> alone lists every statement it knows.</td>
@@ -976,136 +955,8 @@ LINE 1: SELECT count(*) AS quoted_fails FROM "Users";</pre
                     <td><code>\! echo hello</code></td>
                     <td>Run a shell command without leaving <code>psql</code>.</td>
                   </tr>
-                  <tr>
-                    <td><code>\watch 5</code></td>
-                    <td>Re-run the last query every 5 seconds until you press Ctrl+C. Useful for watching a count change.</td>
-                  </tr>
                 </tbody>
               </table>
-
-              <h3>Reading output comfortably</h3>
-              <table class="meta-table sheet">
-                <thead>
-                  <tr>
-                    <th>Command</th>
-                    <th>What it does</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><code>\pset null '(missing)'</code></td>
-                    <td>Print <code>NULL</code> as a word instead of a blank. The single most useful setting for this lesson — it makes missing data impossible to skim past:</td>
-                  </tr>
-                  <tr>
-                    <td><code>\pset null ''</code></td>
-                    <td>Put it back to blank.</td>
-                  </tr>
-                  <tr>
-                    <td><code>\x</code></td>
-                    <td>Toggle expanded output, one field per line, for rows too wide to read across:</td>
-                  </tr>
-                  <tr>
-                    <td><code>\x auto</code></td>
-                    <td>Use expanded output only when the row does not fit.</td>
-                  </tr>
-                  <tr>
-                    <td><code>\timing</code></td>
-                    <td>Report how long each statement took — <code>Time: 1.731 ms</code> after the result.</td>
-                  </tr>
-                  <tr>
-                    <td><code>\pset pager off</code></td>
-                    <td>Never open a pager; print everything straight to the screen.</td>
-                  </tr>
-                  <tr>
-                    <td><code>\pset border 2</code></td>
-                    <td>Draw box borders around result tables.</td>
-                  </tr>
-                  <tr>
-                    <td><code>\o out.txt</code></td>
-                    <td>Send query results to a file; <code>\o</code> on its own sends them back to the screen.</td>
-                  </tr>
-                  <tr>
-                    <td><code>\H</code> / <code>\a</code> / <code>\f ','</code></td>
-                    <td>HTML output / unaligned output / change the field separator.</td>
-                  </tr>
-                  <tr>
-                    <td><code>\C 'Users'</code></td>
-                    <td>Give the next result a title.</td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <p>Those two are worth seeing, because both change what you <em>think</em> the data says:</p>
-              <pre class="sql">
-\pset null '(missing)'
-SELECT firstname, age, email FROM users WHERE age IS NULL OR email IS NULL;</pre
-              >
-              <pre class="out">
- firstname |    age    |          email
------------+-----------+--------------------------
- Priya     | (missing) | priya.sharma@example.com
- Tomas     |        45 | (missing)
-(2 rows)</pre
-              >
-              <pre class="sql">
-\x
-SELECT firstname, age FROM users WHERE age IS NULL;</pre
-              >
-              <pre class="out">
--[ RECORD 1 ]----
-firstname | Priya
-age       |</pre
-              >
-              <p>The lesson's blanks are suddenly explicit, and the wide row now reads down instead of across.</p>
-
-              <h3>Files and bulk data</h3>
-              <table class="meta-table sheet">
-                <thead>
-                  <tr>
-                    <th>Command</th>
-                    <th>What it does</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><code>\copy users TO 'users.csv' CSV HEADER</code></td>
-                    <td>Write the table out to a CSV. Run on your eight rows it answers <code>COPY 8</code>.</td>
-                  </tr>
-                  <tr>
-                    <td><code>\copy users FROM 'users.csv' CSV HEADER</code></td>
-                    <td>Read a CSV back in. This is the fastest way to load real data.</td>
-                  </tr>
-                  <tr>
-                    <td><code>COPY users FROM '/path/on/server' CSV</code></td>
-                    <td>
-                      The server-side twin, and a classic trap: the server opens the file, so the path is relative to the <em>server</em>, not to you, and it needs superuser rights. <code>\copy</code> has the backslash
-                      and runs on your side — prefer it.
-                    </td>
-                  </tr>
-                  <tr>
-                    <td><code>\gset</code></td>
-                    <td>Run a query and store the single resulting row in <code>psql</code> variables.</td>
-                  </tr>
-                  <tr>
-                    <td><code>\set who 'Mary'</code> then <code>:'who'</code></td>
-                    <td>Define a variable, then substitute it into a statement as a properly quoted string.</td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <p>What that export actually produced — note how the two missing values left the building as empty fields between commas, not as the word <code>NULL</code>:</p>
-              <pre class="out">
-firstname,lastname,age,email
-Mary,Johnson,34,mary.johnson@example.com
-James,Smith,41,james.smith@example.com
-Aroha,Ngata,29,aroha.ngata@example.com
-Liam,O'Brien,52,liam.obrien@example.com
-Priya,Sharma,,priya.sharma@example.com
-Tomas,Novak,45,
-Mary,Johnson,34,Mary.Johnson@Example.Com
-Sofia,Rossi,17,sofia.rossi@example.com</pre
-              >
-              <p>That is why <code>\pset null</code> matters on the way in: a CSV cannot tell you whether a field was empty or missing.</p>
 
               <h3>The SQL you have already used</h3>
               <table class="meta-table sheet">
@@ -1117,7 +968,7 @@ Sofia,Rossi,17,sofia.rossi@example.com</pre
                 </thead>
                 <tbody>
                   <tr>
-                    <td><code>CREATE DATABASE basic_psql;</code></td>
+                    <td><code>CREATE DATABASE blah_db;</code></td>
                     <td>Make an empty database to work inside.</td>
                   </tr>
                   <tr>
@@ -1161,17 +1012,11 @@ Sofia,Rossi,17,sofia.rossi@example.com</pre
                     <td>Test for a missing value. Never with <code>=</code>.</td>
                   </tr>
                   <tr>
-                    <td><code>lower(email)</code> / <code>email ILIKE '...'</code></td>
+                    <td>Case insensitive search:<code>lower(email)</code> OR <code>WHERE email ILIKE '%@yahoo.com'</code></td>
                     <td>Compare text without caring about capitals.</td>
-                  </tr>
-                  <tr>
-                    <td><code>UPDATE</code> / <code>DELETE</code> / <code>PRIMARY KEY</code> / <code>JOIN</code></td>
-                    <td>Not yet — this is the next rung, and every clause above is the ground it stands on.</td>
                   </tr>
                 </tbody>
               </table>
-
-              <p>All of it is one of four shapes: choose columns, choose rows, summarise rows, or change rows. The commands above are vocabulary; the shapes are the skill.</p>
             </section>
           </div>
         </div>
