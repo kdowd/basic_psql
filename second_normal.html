@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Two tables instead of one — second normal form</title>
+    <link rel="stylesheet" href="./rootvars.css" />
+    <link rel="stylesheet" href="./menu.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      main {
+        max-width: 780px;
+        margin: 0 auto;
+        padding: 44px clamp(18px, 4vw, 40px) 90px;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(28px, 4.6vw, 36px);
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+      }
+
+      .lede {
+        margin: 0 0 14px;
+        font-size: 18px;
+        color: var(--text-muted);
+      }
+
+      h2 {
+        margin: 52px 0 16px;
+        font-size: 22px;
+        letter-spacing: -0.015em;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      h3 {
+        margin: 30px 0 10px;
+        font-size: 17.5px;
+      }
+
+      p {
+        margin: 0 0 14px;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 16px;
+        padding-left: 24px;
+      }
+
+      li + li {
+        margin-top: 7px;
+      }
+
+      a {
+        color: var(--accent);
+      }
+
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+        font-size: 0.92em;
+      }
+
+      pre {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+        font-size: 13.5px;
+        line-height: 1.5;
+        background: var(--surface-alt);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px 14px;
+        margin: 0 0 12px;
+        overflow-x: auto;
+      }
+
+      pre.type {
+        border-left: 3px solid var(--accent);
+      }
+
+      pre.see {
+        border-left: 3px solid var(--border);
+      }
+
+      .say {
+        margin: 0 0 12px;
+        font-size: 15.5px;
+        color: var(--text-muted);
+      }
+
+      .say strong,
+      .small strong {
+        color: var(--text);
+      }
+
+      .small {
+        margin: 0 0 14px;
+        font-size: 15px;
+        color: var(--text-muted);
+      }
+
+      .callout {
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--accent);
+        background: var(--surface);
+        border-radius: var(--radius);
+        padding: 14px 16px;
+        margin: 18px 0;
+        font-size: 16px;
+      }
+
+      .callout.warn {
+        border-left-color: #d97706;
+      }
+
+      .callout p:last-child {
+        margin-bottom: 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 16px;
+        margin: 0 0 18px;
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 9px 10px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+      }
+
+      th {
+        font-size: 11.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+      }
+
+      td:first-child {
+        white-space: nowrap;
+      }
+
+      .ex {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        margin: 0 0 16px;
+        box-shadow: var(--shadow);
+      }
+
+      .ex h3 {
+        margin: 0 0 8px;
+        font-size: 17px;
+      }
+
+      .ex .shape {
+        margin: 0 0 12px;
+        font-size: 15px;
+        color: var(--text-muted);
+      }
+
+      details {
+        border-top: 1px dashed var(--border);
+        padding-top: 10px;
+      }
+
+      summary {
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+
+      summary:hover {
+        color: var(--accent);
+      }
+
+      details[open] summary {
+        margin-bottom: 10px;
+      }
+
+      .done {
+        margin-top: 52px;
+        padding: 20px 22px;
+        background: var(--accent-soft);
+        border-radius: var(--radius);
+      }
+
+      .done p:last-child {
+        margin-bottom: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="site-header">
+      <p>Built using <strong>DeepSeek Harness - Agentic AI.</strong></p>
+      <div class="hero-menu">
+        <a href="./index.html">Home</a>
+        <a href="./basic_usage.html">Basic Usage</a>
+        <a href="./intermediate_usage.html">Intermediate Usage</a>
+      </div>
+    </header>
+
+    <main>
+      <h1>Two tables instead of one</h1>
+      <p class="lede">
+        Eight people. Each one has a first name, a last name, and a job. Storing all of that in one
+        table works — right up until you need to change the name of a job, and discover you have to
+        change it in three places.
+      </p>
+      <p class="small">
+        This page builds the one-table version first, shows you the three things that go wrong with
+        it, then splits it into two tables joined by a foreign key. Everything below was run against
+        PostgreSQL 18.6 on this machine, so the output under each command is what you should get.
+        The names are real people; the job matches are not — treat the whole table as sample data.
+      </p>
+
+      <h2>1. All of it in one table</h2>
+
+      <p>Start a database of its own, then write everything you know as one row per person:</p>
+      <pre class="type">psql -U postgres</pre>
+      <pre class="type">CREATE DATABASE jobsdb;
+\c jobsdb</pre>
+      <p class="small">
+        If you get <code>ERROR: database "jobsdb" already exists</code>, you have made it before —
+        skip that line and go straight to <code>\c jobsdb</code>.
+      </p>
+
+      <pre class="type">CREATE TABLE people_flat (
+    id        integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    firstname text NOT NULL,
+    lastname  text NOT NULL,
+    job_title text NOT NULL
+);</pre>
+      <pre class="see">CREATE TABLE</pre>
+
+      <p>The <code>id</code> is there so every row has something unique to point at. The other three
+        columns are the three facts you actually care about. Now the eight people:</p>
+
+      <pre class="type">INSERT INTO people_flat (firstname, lastname, job_title) VALUES
+    ('Dave',    'Smith',    'Electrician'),
+    ('Tenzing', 'Norgay',   'Mountaineer'),
+    ('Anne',    'Wilson',   'Electrician'),
+    ('Ta',      'Mok',      'Gangster'),
+    ('Viv',     'Richards', 'Plumber'),
+    ('Jane',    'Campion',  'Electrician'),
+    ('Shakib',  'Khan',     'Actor'),
+    ('Ayub',    'Bachchu',  'Musician');</pre>
+      <pre class="see">INSERT 0 8</pre>
+
+      <pre class="type">SELECT id, firstname, lastname, job_title FROM people_flat ORDER BY id;</pre>
+      <pre class="see"> id | firstname | lastname |  job_title
+----+-----------+----------+-------------
+  1 | Dave      | Smith    | Electrician
+  2 | Tenzing   | Norgay   | Mountaineer
+  3 | Anne      | Wilson   | Electrician
+  4 | Ta        | Mok      | Gangster
+  5 | Viv       | Richards | Plumber
+  6 | Jane      | Campion  | Electrician
+  7 | Shakib    | Khan     | Actor
+  8 | Ayub      | Bachchu  | Musician
+(8 rows)</pre>
+
+      <p class="say">
+        That is a perfectly good table. Every row is complete, nothing is missing, and every question
+        you would ask about these eight people is a one-line <code>SELECT</code>. This is what makes
+        the next section worth reading: the table is <em>correct</em>, and it is still a bad idea.
+      </p>
+
+      <h2>2. What goes wrong later</h2>
+
+      <h3>The same fact, stored three times</h3>
+      <p>Count how often each job title appears:</p>
+      <pre class="type">SELECT job_title, count(*) AS people FROM people_flat
+GROUP BY job_title ORDER BY people DESC, job_title;</pre>
+      <pre class="see">  job_title  | people
+-------------+--------
+ Electrician |      3
+ Actor       |      1
+ Gangster    |      1
+ Mountaineer |      1
+ Musician    |      1
+ Plumber     |      1
+(6 rows)</pre>
+
+      <p class="say">
+        Eight rows, but only <strong>six</strong> facts about jobs. The word
+        <code>Electrician</code> is written out three times, and nothing in the database links those
+        three copies to each other. They are just three strings that happen to match.
+      </p>
+
+      <h3>Anomaly 1 — one change, many rows</h3>
+      <p>You decide electricians should be called <em>Electrical Technicians</em>. That is one fact
+        about one job, so it should be one change:</p>
+      <pre class="type">BEGIN;
+UPDATE people_flat SET job_title = 'Electrical Technician'
+WHERE job_title = 'Electrician';
+SELECT count(*) AS rows_changed FROM people_flat
+WHERE job_title = 'Electrical Technician';
+ROLLBACK;</pre>
+      <pre class="see">BEGIN
+UPDATE 3
+ rows_changed
+--------------
+            3
+(1 row)
+
+ROLLBACK</pre>
+      <p class="say">
+        <strong>UPDATE 3.</strong> One fact, three rows. Get it wrong — a typo in the
+        <code>WHERE</code>, a row you forgot — and your table now disagrees with itself about what
+        these people do. That is an <em>update anomaly</em>.
+      </p>
+
+      <h3>Anomaly 2 — deleting a person destroys a fact</h3>
+      <p>Ayub leaves the music business entirely, so you delete him:</p>
+      <pre class="type">SELECT count(DISTINCT job_title) AS jobs_before FROM people_flat;
+BEGIN;
+DELETE FROM people_flat WHERE lastname = 'Bachchu';
+SELECT count(DISTINCT job_title) AS jobs_after FROM people_flat;
+ROLLBACK;</pre>
+      <pre class="see"> jobs_before
+-------------
+           6
+(1 row)
+
+BEGIN
+DELETE 1
+ jobs_after
+------------
+          5
+(1 row)
+
+ROLLBACK</pre>
+      <p class="say">
+        The number of job titles fell from 6 to 5. You deleted a <em>person</em>, and the fact that
+        <em>Musician</em> is a job disappeared with him. Now the database cannot answer "what jobs
+        exist?" without also assuming somebody currently does them. That is a <em>delete anomaly</em>.
+      </p>
+
+      <h3>Anomaly 3 — a fact that cannot exist on its own</h3>
+      <p>You want to record that <em>Blacksmith</em> is one of the jobs on your list. There is no
+        person doing it yet, so try adding the job on its own:</p>
+      <pre class="type">INSERT INTO people_flat (firstname, lastname, job_title)
+VALUES (NULL, NULL, 'Blacksmith');</pre>
+      <pre class="see">ERROR:  null value in column "firstname" of relation "people_flat" violates not-null constraint
+DETAIL:  Failing row contains (9, null, null, Blacksmith).</pre>
+      <p class="say">
+        Refused — and the only way to make it work would be to invent a person, or drop the
+        <code>NOT NULL</code> constraints and allow a row that describes nobody. A table keyed on
+        people simply has nowhere to put a fact about a job. That is an <em>insert anomaly</em>.
+      </p>
+
+      <div class="callout warn">
+        <p>
+          <strong>Three symptoms, one cause.</strong> The table is keyed on <em>people</em>, but a
+          job title is not a fact about a person — it is a fact about a job, and it is being stored
+          in the only place available. Fix the cause and all three symptoms disappear at once.
+        </p>
+      </div>
+
+      <h2>3. Split it in two</h2>
+
+      <p>Give job titles their own table, and let each person point at one.</p>
+
+      <h3>The jobs table</h3>
+      <pre class="type">CREATE TABLE jobs (
+    id    integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    title text NOT NULL UNIQUE
+);
+
+INSERT INTO jobs (title) VALUES
+    ('Electrician'), ('Mountaineer'), ('Gangster'),
+    ('Plumber'), ('Actor'), ('Musician');</pre>
+      <pre class="see">CREATE TABLE
+INSERT 0 6</pre>
+      <p class="say">
+        Six rows, not eight — <code>Electrician</code> is in there <strong>once</strong>. The
+        <code>UNIQUE</code> is doing real work: it tells Postgres that a second row called
+        <code>Electrician</code> is a mistake, not a coincidence.
+      </p>
+
+      <h3>The people table</h3>
+      <pre class="type">CREATE TABLE people (
+    id        integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    firstname text    NOT NULL,
+    lastname  text    NOT NULL,
+    job_id    integer NOT NULL REFERENCES jobs(id)
+);
+
+INSERT INTO people (firstname, lastname, job_id) VALUES
+    ('Dave',    'Smith',    1),
+    ('Tenzing', 'Norgay',   2),
+    ('Anne',    'Wilson',   1),
+    ('Ta',      'Mok',      3),
+    ('Viv',     'Richards', 4),
+    ('Jane',    'Campion',  1),
+    ('Shakib',  'Khan',     5),
+    ('Ayub',    'Bachchu',  6);</pre>
+      <pre class="see">CREATE TABLE
+INSERT 0 8</pre>
+
+      <p class="say">
+        The job title is gone from this table. In its place is <code>job_id</code> — a number
+        pointing at a row in <code>jobs</code>. <code>REFERENCES jobs(id)</code> is the
+        <strong>foreign key</strong>: it is a promise Postgres will enforce, that this number always
+        names a job that exists.
+      </p>
+
+      <p class="say">Ask Postgres what it built:</p>
+      <pre class="type">\d people</pre>
+      <pre class="see">                           Table "public.people"
+  Column   |  Type   | Collation | Nullable |           Default
+-----------+---------+-----------+----------+------------------------------
+ id        | integer |           | not null | generated always as identity
+ firstname | text    |           | not null |
+ lastname  | text    |           | not null |
+ job_id    | integer |           | not null |
+Indexes:
+    "people_pkey" PRIMARY KEY, btree (id)
+Foreign-key constraints:
+    "people_job_id_fkey" FOREIGN KEY (job_id) REFERENCES jobs(id)</pre>
+
+      <p>Two tables, side by side:</p>
+      <pre class="type">SELECT * FROM jobs ORDER BY id;</pre>
+      <pre class="see"> id |    title
+----+-------------
+  1 | Electrician
+  2 | Mountaineer
+  3 | Gangster
+  4 | Plumber
+  5 | Actor
+  6 | Musician
+(6 rows)</pre>
+
+      <pre class="type">SELECT * FROM people ORDER BY id;</pre>
+      <pre class="see"> id | firstname | lastname | job_id
+----+-----------+----------+--------
+  1 | Dave      | Smith    |      1
+  2 | Tenzing   | Norgay   |      2
+  3 | Anne      | Wilson   |      1
+  4 | Ta        | Mok      |      3
+  5 | Viv       | Richards |      4
+  6 | Jane      | Campion  |      1
+  7 | Shakib    | Khan     |      5
+  8 | Ayub      | Bachchu  |      6
+(8 rows)</pre>
+
+      <p class="say">
+        Read the <code>job_id</code> column downwards: <code>1, 1, 1</code> for Dave, Anne and Jane.
+        Three people now share <em>one</em> row in <code>jobs</code>, so the text
+        <code>Electrician</code> is stored once and the link between the copies is explicit — it is
+        the same number, and the database knows it.
+      </p>
+
+      <h2>4. Getting the original view back</h2>
+
+      <p>You have not lost the table from section 1 — you can rebuild it any time by joining the two
+        halves back together:</p>
+      <pre class="type">SELECT p.id, p.firstname, p.lastname, j.title AS job_title
+FROM people p JOIN jobs j ON j.id = p.job_id
+ORDER BY p.id;</pre>
+      <pre class="see"> id | firstname | lastname |  job_title
+----+-----------+----------+-------------
+  1 | Dave      | Smith    | Electrician
+  2 | Tenzing   | Norgay   | Mountaineer
+  3 | Anne      | Wilson   | Electrician
+  4 | Ta        | Mok      | Gangster
+  5 | Viv       | Richards | Plumber
+  6 | Jane      | Campion  | Electrician
+  7 | Shakib    | Khan     | Actor
+  8 | Ayub      | Bachchu  | Musician
+(8 rows)</pre>
+
+      <p class="say">
+        Identical to the single table, row for row. <code>JOIN ... ON j.id = p.job_id</code> is the
+        instruction "for each person, go and fetch the job row they point at".
+      </p>
+
+      <p class="say">
+        Identical is a claim, so let us check it properly. <code>EXCEPT</code> returns rows in the
+        first query that are missing from the second, so running it both ways proves the two versions
+        hold exactly the same information:
+      </p>
+      <pre class="type">SELECT count(*) AS rows_only_in_flat FROM (
+    (SELECT firstname, lastname, job_title FROM people_flat)
+    EXCEPT
+    (SELECT p.firstname, p.lastname, j.title
+     FROM people p JOIN jobs j ON j.id = p.job_id)
+) AS diff;</pre>
+      <pre class="see"> rows_only_in_flat
+-------------------
+                 0
+(1 row)</pre>
+      <pre class="type">SELECT count(*) AS rows_only_in_join FROM (
+    (SELECT p.firstname, p.lastname, j.title
+     FROM people p JOIN jobs j ON j.id = p.job_id)
+    EXCEPT
+    (SELECT firstname, lastname, job_title FROM people_flat)
+) AS diff;</pre>
+      <pre class="see"> rows_only_in_join
+-------------------
+                 0
+(1 row)</pre>
+
+      <p class="say">
+        Zero rows lost, zero rows invented. The split is lossless — and what you paid for it is that
+        every question about people <em>and</em> their jobs now needs a <code>JOIN</code>. That is
+        the trade, and it is usually worth it.
+      </p>
+
+      <h2>5. What the database now enforces for you</h2>
+
+      <p>Three things become impossible, or at least loud, once the foreign key and the
+        <code>UNIQUE</code> are in place.</p>
+
+      <h3>A person cannot be given a job that does not exist</h3>
+      <pre class="type">INSERT INTO people (firstname, lastname, job_id)
+VALUES ('Test', 'Person', 99);</pre>
+      <pre class="see">ERROR:  insert or update on table "people" violates foreign key constraint "people_job_id_fkey"
+DETAIL:  Key (job_id)=(99) is not present in table "jobs".</pre>
+
+      <h3>A job cannot be deleted while people still do it</h3>
+      <pre class="type">DELETE FROM jobs WHERE id = 1;</pre>
+      <pre class="see">ERROR:  update or delete on table "jobs" violates foreign key constraint "people_job_id_fkey" on table "people"
+DETAIL:  Key (id)=(1) is still referenced from table "people".</pre>
+      <p class="say">
+        Anomaly 2 is now a refusal rather than a silent loss. You cannot delete <em>Musician</em> by
+        deleting Ayub, because Ayub is not where the job lives.
+      </p>
+
+      <h3>The same title cannot be stored twice</h3>
+      <pre class="type">INSERT INTO jobs (title) VALUES ('Plumber');</pre>
+      <pre class="see">ERROR:  duplicate key value violates unique constraint "jobs_title_key"
+DETAIL:  Key (title)=(Plumber) already exists.</pre>
+
+      <p>And the change from anomaly 1, done properly — one fact, one row:</p>
+      <pre class="type">BEGIN;
+UPDATE jobs SET title = 'Electrical Technician' WHERE id = 1;
+SELECT count(*) AS rows_changed FROM jobs WHERE title = 'Electrical Technician';
+ROLLBACK;</pre>
+      <pre class="see">BEGIN
+UPDATE 1
+ rows_changed
+--------------
+            1
+(1 row)
+
+ROLLBACK</pre>
+      <p class="say">
+        <code>UPDATE 3</code> became <code>UPDATE 1</code>. That difference is the whole point of the
+        exercise.
+      </p>
+
+      <div class="callout warn">
+        <p>
+          <strong>Be honest about what the split does not fix.</strong> A <em>misspelling</em> is not
+          a duplicate, so <code>UNIQUE</code> will not stop it:
+        </p>
+        <pre class="type">BEGIN;
+INSERT INTO jobs (title) VALUES ('Electrican');
+SELECT count(*) AS jobs_now FROM jobs;
+SELECT count(*) AS people_still FROM people;
+ROLLBACK;</pre>
+        <pre class="see">BEGIN
+INSERT 0 1
+ jobs_now
+----------
+        7
+(1 row)
+
+ people_still
+--------------
+            8
+(1 row)
+
+ROLLBACK</pre>
+        <p>
+          It went in without complaint. The database cannot know your <code>Electrican</code> was
+          meant to be <code>Electrician</code> — to Postgres those are two different strings, and it
+          will happily keep both.
+        </p>
+        <p>
+          What the split <em>does</em> give you is a place to notice. There are now six job rows in
+          one small table, so a stray seventh stands out immediately — and fixing it is one
+          <code>UPDATE</code> on one row, with the foreign key guaranteeing the people who pointed at
+          it follow along. In the flat table the same typo was invisible: one row out of eight, in a
+          column of free text, quietly claiming a job nobody else has.
+        </p>
+      </div>
+
+      <h2>6. Your turn</h2>
+
+      <p>Three questions. The expected row counts are given so you can tell whether you are right
+        without asking me.</p>
+
+      <div class="ex">
+        <h3>Which job titles are held by more than one person?</h3>
+        <p class="shape">
+          <strong>Expected:</strong> 1 row, columns <code>job_title, people</code>. Use the
+          <em>flat</em> table — this is the question that motivates everything above.
+        </p>
+        <details>
+          <summary>Answer</summary>
+          <pre class="type">SELECT job_title, count(*) AS people FROM people_flat
+GROUP BY job_title HAVING count(*) &gt; 1;</pre>
+          <pre class="see">  job_title  | people
+-------------+--------
+ Electrician |      3
+(1 row)</pre>
+          <p class="small">
+            <code>HAVING</code>, not <code>WHERE</code>: the condition is about a group
+            (<code>count(*)</code>), and <code>WHERE</code> runs before the groups exist.
+          </p>
+        </details>
+      </div>
+
+      <div class="ex">
+        <h3>List every person with their job title, from the two split tables</h3>
+        <p class="shape">
+          <strong>Expected:</strong> 8 rows, columns <code>firstname, lastname, title</code>, in
+          <code>people.id</code> order.
+        </p>
+        <details>
+          <summary>Answer</summary>
+          <pre class="type">SELECT p.firstname, p.lastname, j.title
+FROM people p JOIN jobs j ON j.id = p.job_id
+ORDER BY p.id;</pre>
+          <p class="small">
+            The output is the eight-row table printed in section 4 — same rows, same order. If you
+            got 48 rows, you wrote <code>FROM people, jobs</code> without the
+            <code>ON</code>: that is every person matched with every job, which is not what
+            <code>JOIN</code> means.
+          </p>
+        </details>
+      </div>
+
+      <div class="ex">
+        <h3>Add a job called Blacksmith that nobody does yet</h3>
+        <p class="shape">
+          <strong>Expected:</strong> <code>INSERT 0 1</code>, then <strong>7</strong> jobs and
+          <strong>8</strong> people. This is anomaly 3, fixed.
+        </p>
+        <details>
+          <summary>Answer</summary>
+          <pre class="type">INSERT INTO jobs (title) VALUES ('Blacksmith');
+
+SELECT count(*) AS jobs  FROM jobs;
+SELECT count(*) AS people FROM people;</pre>
+          <pre class="see">INSERT 0 1
+ jobs
+------
+    7
+(1 row)
+
+ people
+--------
+      8
+(1 row)</pre>
+          <p class="small">
+            One new job row, and not a single person added — the fact now has somewhere to live on
+            its own. Note this changes your table: from here on there are 7 jobs, not 6. If you want
+            the starting state back, re-run <code>psql -U postgres -f second_normal.sql</code>.
+          </p>
+        </details>
+      </div>
+
+      <h2>7. So is this second normal form?</h2>
+
+      <p>
+        The page is called <em>second_normal</em>, so this deserves a straight answer: the table in
+        section 1 is <strong>already in second normal form</strong>, and in third normal form as
+        well. The rule for 2NF is that every non-key column must depend on the
+        <em>whole</em> key, not on part of it — and a rule about parts of a key only has teeth when
+        the key has more than one column.
+      </p>
+
+      <p>
+        Our key is <code>id</code> (or <code>firstname, lastname</code> if you prefer the natural
+        key). Both are single facts about a person, and <code>job_title</code> needs the whole person
+        to be determined. No column depends on a <em>fragment</em> of the key, so there is nothing
+        for 2NF to object to. Splitting <code>jobs</code> out is what people usually call
+        <strong>extracting a lookup table</strong>, and it is justified by the anomalies in section 2,
+        not by a normal-form violation.
+      </p>
+
+      <p>A real 2NF violation needs a composite key and a column that only needs part of it.
+        The classic shape is a table recording <em>who works which job</em>, where the rate belongs
+        to the job rather than to the pairing:</p>
+
+      <pre class="type">CREATE TABLE work (
+    person_id integer REFERENCES people(id),
+    job_id    integer REFERENCES jobs(id),
+    rate      numeric(6,2) NOT NULL,
+    PRIMARY KEY (person_id, job_id)
+);</pre>
+
+      <p class="small">
+        You do not need to run this — it is here to show the shape. The key is
+        <code>(person_id, job_id)</code>, and <code>rate</code> is determined by
+        <code>job_id</code> alone: change the job and the rate is fixed, whoever is doing it.
+        A column that depends on <em>part</em> of the key is exactly what 2NF forbids. The fix is to
+        move <code>rate</code> into <code>jobs</code> and leave <code>work</code> holding nothing but
+        the two ids — and that fix needs <strong>three</strong> tables, not two.
+      </p>
+
+      <div class="callout">
+        <p>
+          <strong>One sentence to take away.</strong> The two-table split is the fix you will
+          actually reach for; 2NF is the rule that describes a narrower case of the same idea —
+          every column should depend on the whole key, and on nothing else.
+        </p>
+      </div>
+
+      <div class="done">
+        <p>
+          <strong>What you just did.</strong> You built one table, watched a single fact get stored
+          three times, saw three anomalies fall out of that, split the table in two with a foreign
+          key, proved with <code>EXCEPT</code> that nothing was lost, and saw three constraints start
+          refusing bad data on your behalf.
+        </p>
+        <p>
+          The next thing to try is a third table: if a person can hold more than one job, the
+          <code>job_id</code> column in <code>people</code> has to go, and the link between people and
+          jobs becomes a table of its own — which is precisely the <code>work</code> table sketched
+          above.
+        </p>
+        <p>
+          Other pages here: <a href="./intermediate_usage.html">intermediate_usage.html</a> covers
+          keys, constraints and transactions in more depth, and
+          <a href="./index.html">index.html</a> is the full lesson with a psql cheatsheet.
+        </p>
+      </div>
+    </main>
+  </body>
+</html>
